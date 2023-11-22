@@ -21,38 +21,55 @@ extends Control
 
 var player_in_lobby={}
 
+var lobby_params={}
+var map_id:int=-1
+
 var display_name:String
 
 var is_ready=false
 
+var net_id:int=-1
+
 var selector_pick:int=-1
 var change_id:int=-1
 
-var selected_gamemode:int=0
-var selected_map:int=0
-var selected_team:int=0
-var selected_power:int=0
+var server_prop_loaded:bool=0
+
 
 func _ready():
+	net_id=multiplayer.get_unique_id()
+	Networking.lobby_ui_ref=self
 	if(Networking.is_authority):
 		open_switch_gamemode.disabled=false
 		open_switch_map.disabled=false
 	else:
 		open_switch_gamemode.disabled=true
 		open_switch_map.disabled=true
-		
-	gamemode_display.text=GameConstants.gamemodes[selected_gamemode]
-	map_display.text=GameConstants.loaded_maps.keys()[selected_map]
-	team_display.text=GameConstants.teams[selected_team]
-	ability_display.text=GameConstants.powers[selected_power]
-	display_name="GIGA NIGGA"
+	
+	AddPlayer(net_id)
+	
+	if(!Networking.is_authority):
+		pass
+	else:
+		map_id=0
+		lobby_params["GM"]=0
+		lobby_params["Map"]=GameConstants.loaded_maps.keys()[map_id]
+		lobby_params["Ready"]="0/0"
+		gamemode_display.text=GameConstants.gamemodes[lobby_params["GM"]]
+		map_display.text=lobby_params["Map"]
+	
+	
+	
+	team_display.text=GameConstants.teams[player_in_lobby[net_id]["team"]]
+	ability_display.text=GameConstants.powers[player_in_lobby[net_id]["power"]]
+	display_name=player_in_lobby[net_id]["display_name"]
 	DisplayReady()
-	Networking.lobby_ui_ref=self
-	AddPlayer(1)
+	$Grid/SubGrid/Text_name.text=display_name
+	
 
 func AddPlayer(peer_id:int):
 	player_in_lobby[peer_id]={}
-	player_in_lobby[peer_id]["display_name"]="GIGGA NIGGA"
+	player_in_lobby[peer_id]["display_name"]="PLACEHOLDER_NAME"
 	player_in_lobby[peer_id]["team"]=0
 	player_in_lobby[peer_id]["power"]=0
 	player_in_lobby[peer_id]["ready"]=0
@@ -67,6 +84,13 @@ func UpdatePlayerList(arr:Array):
 	player_list.clear()
 	for i in arr:
 		player_list.add_item(i)
+
+func DisplayData(dat:Dictionary):
+	
+	gamemode_display.text=GameConstants.gamemodes[dat["GM"]]
+	map_display.text=dat["Map"]
+	ready_amount.text=dat["Ready"]
+	
 
 func GetShortPlayerList()->Array:
 	var arr=[]
@@ -95,6 +119,11 @@ func UpdatePlayerData(peer_id:int, new_val:String, id:int):
 			pass
 	
 
+func RemovePlayer(peer_id:int):
+	player_in_lobby.erase(peer_id)
+	CheckReady()
+	MassUpdatePlayerList()
+
 func DisplayReady():
 	if(is_ready):
 		ready_display.text="Ready!"
@@ -104,6 +133,7 @@ func DisplayReady():
 		ready_switch.text="Set to Ready!"
 
 func OnLeaveDown():
+	multiplayer.multiplayer_peer=null
 	UImanager.SwitchUI("ConnectionGrid")
 	pass # Replace with function body.
 
@@ -139,45 +169,57 @@ func SetNewVal( new_val:int, id:int):
 	match id:
 		0:
 			gamemode_display.text=GameConstants.gamemodes[new_val]
-			selected_gamemode=new_val
+			lobby_params["GM"]=new_val
 			
 			pass
 		1:
 			map_display.text=GameConstants.loaded_maps.keys()[new_val]
-			selected_map=new_val
-			
+			lobby_params["Map"]=GameConstants.loaded_maps.keys()[new_val]
+			map_id=new_val
 			pass
 		2:
 			team_display.text=GameConstants.teams[new_val]
-			selected_team=new_val
-			player_in_lobby[1]["team"]=new_val
+			player_in_lobby[net_id]["team"]=new_val
+			Networking.LobbyDataSync(str(new_val), 2)
 			pass
 		3:
 			ability_display.text=GameConstants.powers[new_val]
-			selected_power=new_val
-			player_in_lobby[1]["team"]=new_val
+			player_in_lobby[net_id]["power"]=new_val
+			Networking.LobbyDataSync(str(new_val), 3)
 			pass
+	if(Networking.is_authority):
+		Networking.LobbyUpdate(lobby_params)
+
 
 func OnSwitchGamempde():
-	Selector(GameConstants.gamemodes, selected_gamemode, 0)
+	Selector(GameConstants.gamemodes, lobby_params["GM"], 0)
 
 
 func OnSwitchMapDown():
-	Selector(GameConstants.loaded_maps.keys(), selected_gamemode, 1)
+	Selector(GameConstants.loaded_maps.keys(), map_id, 1)
 
 
 func OnSwitchTeamDown():
-	Selector(GameConstants.teams, selected_gamemode, 2)
+	Selector(GameConstants.teams, player_in_lobby[net_id]["team"], 2)
 
 
 func OnSwitchAbilityDown():
-	Selector(GameConstants.powers, selected_gamemode, 3)
+	Selector(GameConstants.powers, player_in_lobby[net_id]["power"], 3)
 
 
 func OnReadySwitchDown():
+	
+	
 	is_ready=!is_ready
+	player_in_lobby[net_id]["ready"]=is_ready
 	DisplayReady()
-	CheckReady()
+	if(Networking.is_authority):
+		CheckReady()
+	else:
+		if(is_ready):
+			Networking.LobbyDataSync("1", 5)
+		else:
+			Networking.LobbyDataSync("0", 5)
 
 
 func CheckReady():
@@ -185,12 +227,17 @@ func CheckReady():
 	var ready_am:int=0
 	for i in player_in_lobby.values():
 		am+=1;
-		if(i["ready"]==1):
+		if(i["ready"]):
 			ready_am+=1;
 	
 	ready_amount.text=str(ready_am)+"/"+str(am)
-	
+	lobby_params["Ready"]=str(ready_am)+"/"+str(am)
+	Networking.LobbyUpdate(lobby_params)
 
 func OnSetNameDown():
 	display_name=$Grid/SubGrid/Text_name.text
-	player_in_lobby[1]["display_name"]=display_name
+	player_in_lobby[net_id]["display_name"]=display_name
+	if(Networking.is_authority):
+		MassUpdatePlayerList()
+	else:
+		Networking.LobbyDataSync(display_name, 4)

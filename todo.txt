@@ -1,0 +1,58 @@
+### GAMEMODES ###
+
+Capture the flag
+Boss fight
+Death match
+Team DM
+Control point
+Tags
+Confirm Kill
+Base wars
+Virus
+Raid (shadow maggots)
+
+### ITEMS ###
+
+Black monster-movment speed
+Fart in a bottle-give additional roll
+Chadium-Roll cool down decrese
+Red shugar-increse HP
+FoRtNiTe ShIeLd LiQuId-Increase Shield
+Fortnite card (for 20$)-Increase Shield regeneration
+Crowbar-crit chance
+Mole in a bottle(KROTOVUHA)-poison damage
+Glass present-increase crit multiplyer
+Iceeagle-frost damage
+Battery-electrodamage
+Bear-chanse to ignore damage
+Sticky belt- increase mag size
+LUBE-increase reload spead
+Gnome-increase reload speed
+
+
+### WEAPONS ###
+
+pistol
+smg
+machingun
+shotgun
+rifle
+
+vacum
+Rocket launcher
+murasama
+x-ray rifle
+medi gun
+
+
+### SPECIAL ABILITIES ###
+
+teleport
+revive
+mine
+century
+shield
+invincibility
+
+
+### NOTES ###

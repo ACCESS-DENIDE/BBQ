@@ -1,0 +1,160 @@
+[gd_scene load_steps=2 format=3 uid="uid://d1jx3eafqw14b"]
+
+[ext_resource type="Script" path="res://UIs/Lobby/LobbyUI.gd" id="1_klq6d"]
+
+[node name="LobbyUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_klq6d")
+
+[node name="Grid" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -370.5
+offset_top = -261.0
+offset_right = 370.5
+offset_bottom = 261.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 2
+
+[node name="PlayerList" type="ItemList" parent="Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SubGrid" type="GridContainer" parent="Grid"]
+layout_mode = 2
+columns = 3
+
+[node name="Gamemode_labe" type="Label" parent="Grid/SubGrid"]
+layout_mode = 2
+text = "Gamemode:"
+
+[node name="Gamemode_display" type="Label" parent="Grid/SubGrid"]
+layout_mode = 2
+text = "Virus"
+
+[node name="Open_switch_gamemode" type="Button" parent="Grid/SubGrid"]
+layout_mode = 2
+text = "EDIT"
+
+[node name="Map_labe" type="Label" parent="Grid/SubGrid"]
+layout_mode = 2
+text = "Map:"
+
+[node name="Map_display" type="Label" parent="Grid/SubGrid"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "CityHall"
+
+[node name="Open_switch_map" type="Button" parent="Grid/SubGrid"]
+layout_mode = 2
+text = "EDIT"
+
+[node name="Team_labe" type="Label" parent="Grid/SubGrid"]
+layout_mode = 2
+text = "Team:"
+
+[node name="Team_display" type="Label" parent="Grid/SubGrid"]
+layout_mode = 2
+text = "Blue"
+
+[node name="Open_switch_team" type="Button" parent="Grid/SubGrid"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = " EDIT "
+
+[node name="Ability_labe" type="Label" parent="Grid/SubGrid"]
+layout_mode = 2
+text = "Ability:"
+
+[node name="Ability_display" type="Label" parent="Grid/SubGrid"]
+layout_mode = 2
+
+[node name="Open_switch_ability" type="Button" parent="Grid/SubGrid"]
+layout_mode = 2
+text = "EDIT"
+
+[node name="Name_labe" type="Label" parent="Grid/SubGrid"]
+layout_mode = 2
+text = "Name:"
+
+[node name="Text_name" type="TextEdit" parent="Grid/SubGrid"]
+layout_mode = 2
+
+[node name="Set_name" type="Button" parent="Grid/SubGrid"]
+layout_mode = 2
+text = "SET"
+
+[node name="Ready_display" type="Label" parent="Grid/SubGrid"]
+layout_mode = 2
+text = "Not ready"
+
+[node name="ReadyAmount" type="Label" parent="Grid/SubGrid"]
+layout_mode = 2
+text = "0/0"
+horizontal_alignment = 1
+
+[node name="Ready_switch" type="Button" parent="Grid/SubGrid"]
+layout_mode = 2
+text = "READY"
+
+[node name="HSplitContainer2" type="HSplitContainer" parent="Grid/SubGrid"]
+layout_mode = 2
+
+[node name="Leave_btn" type="Button" parent="Grid/SubGrid"]
+layout_mode = 2
+text = "LEAVE"
+
+[node name="Sellector" type="GridContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -92.5
+offset_top = -134.0
+offset_right = 92.5
+offset_bottom = 134.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Selection_list" type="ItemList" parent="Sellector"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="GridContainer" type="GridContainer" parent="Sellector"]
+layout_mode = 2
+columns = 2
+
+[node name="Back_btn" type="Button" parent="Sellector/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "BACK"
+
+[node name="Select_btn" type="Button" parent="Sellector/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "SELECT"
+
+[connection signal="button_down" from="Grid/SubGrid/Open_switch_gamemode" to="." method="OnSwitchGamempde"]
+[connection signal="button_down" from="Grid/SubGrid/Open_switch_map" to="." method="OnSwitchMapDown"]
+[connection signal="button_down" from="Grid/SubGrid/Open_switch_team" to="." method="OnSwitchTeamDown"]
+[connection signal="button_down" from="Grid/SubGrid/Open_switch_ability" to="." method="OnSwitchAbilityDown"]
+[connection signal="button_down" from="Grid/SubGrid/Set_name" to="." method="OnSetNameDown"]
+[connection signal="button_down" from="Grid/SubGrid/Ready_switch" to="." method="OnReadySwitchDown"]
+[connection signal="button_down" from="Grid/SubGrid/Leave_btn" to="." method="OnLeaveDown"]
+[connection signal="button_down" from="Sellector/GridContainer/Back_btn" to="." method="OnBackDown"]
+[connection signal="button_down" from="Sellector/GridContainer/Select_btn" to="." method="OnSelectDown"]

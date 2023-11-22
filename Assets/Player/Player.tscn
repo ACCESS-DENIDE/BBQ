@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://dk6nk25xuwvdd"]
+
+[ext_resource type="SpriteFrames" uid="uid://btek5xije1bu4" path="res://Resourses/Animations/player.tres" id="1_20ujp"]
+[ext_resource type="Shape2D" uid="uid://bc4vlcp7rq0x4" path="res://Resourses/Collisions/player_col.tres" id="2_qqiq8"]
+
+[node name="Player" type="CharacterBody2D"]
+
+[node name="PlayerAnim" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = ExtResource("1_20ujp")
+animation = &"run"
+frame_progress = 0.321816
+
+[node name="PlayerCol" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = ExtResource("2_qqiq8")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(4, 4)

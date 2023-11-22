@@ -1,0 +1,42 @@
+[gd_scene load_steps=2 format=3 uid="uid://cahkk6qv6tx07"]
+
+[ext_resource type="Script" path="res://UIs/MainMenu/MainMenuUI.gd" id="1_qj4i8"]
+
+[node name="MainMenuUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_qj4i8")
+
+[node name="Grid" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -39.5
+offset_top = -210.0
+offset_right = 39.5
+offset_bottom = -109.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Play" type="Button" parent="Grid"]
+layout_mode = 2
+text = "PLAY"
+
+[node name="Settings" type="Button" parent="Grid"]
+layout_mode = 2
+text = "OPTIONS"
+
+[node name="Exit" type="Button" parent="Grid"]
+layout_mode = 2
+text = "EXIT"
+
+[connection signal="button_down" from="Grid/Play" to="." method="OnPlayButtonDown"]
+[connection signal="button_down" from="Grid/Settings" to="." method="OnSettingsButtonDown"]
+[connection signal="button_down" from="Grid/Exit" to="." method="OnExitButtonDown"]

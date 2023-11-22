@@ -1,0 +1,68 @@
+[gd_scene load_steps=2 format=3 uid="uid://qbnrt62cw3lg"]
+
+[ext_resource type="Script" path="res://UIs/ConnectionGrid/ConnectionGrid.gd" id="1_8xmoq"]
+
+[node name="ConnectionGrid" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8xmoq")
+
+[node name="Gid" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -162.0
+offset_top = -70.5
+offset_right = 162.0
+offset_bottom = 70.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubGrid" type="GridContainer" parent="Gid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 2
+
+[node name="IP_label" type="Label" parent="Gid/SubGrid"]
+layout_mode = 2
+text = "IP: "
+
+[node name="IP_text" type="TextEdit" parent="Gid/SubGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+placeholder_text = "SERVER IP"
+
+[node name="Port_label" type="Label" parent="Gid/SubGrid"]
+layout_mode = 2
+text = "PORT: "
+
+[node name="Port_text" type="TextEdit" parent="Gid/SubGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+placeholder_text = "SERVER PORT"
+
+[node name="Host_button" type="Button" parent="Gid/SubGrid"]
+layout_mode = 2
+text = "HOST GAME"
+
+[node name="Connect_button" type="Button" parent="Gid/SubGrid"]
+layout_mode = 2
+text = "CONNECT TO SERVER"
+
+[node name="Back_button" type="Button" parent="Gid"]
+layout_mode = 2
+text = "BACK"
+
+[connection signal="button_down" from="Gid/SubGrid/Host_button" to="." method="OnHostDown"]
+[connection signal="button_down" from="Gid/SubGrid/Connect_button" to="." method="OnConnectDown"]
+[connection signal="button_down" from="Gid/Back_button" to="." method="OnBackDown"]

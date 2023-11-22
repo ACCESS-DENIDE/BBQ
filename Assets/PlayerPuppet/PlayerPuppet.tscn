@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://l55nmkxhboi5"]
+
+[ext_resource type="SpriteFrames" uid="uid://btek5xije1bu4" path="res://Resourses/Animations/player.tres" id="1_bbt0i"]
+[ext_resource type="Shape2D" uid="uid://bc4vlcp7rq0x4" path="res://Resourses/Collisions/player_col.tres" id="2_syqsg"]
+
+[node name="PlayerPuppet" type="CharacterBody2D"]
+
+[node name="PuppetAnim" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = ExtResource("1_bbt0i")
+animation = &"run"
+
+[node name="PuppetCol" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = ExtResource("2_syqsg")

@@ -1,6 +1,8 @@
 extends Controls
-
+var CL
 func _ready():
+	CL=CanvasLayer.new()
+	add_child(CL)
 	SwitchUI("MainMenu")
 
 
@@ -12,8 +14,8 @@ var lobby=preload("res://UIs/Lobby/LobbyUI.tscn")
 var map_editor=preload("res://UIs/MapEditor/MapEditor.tscn")
 
 func SwitchUI(ui_id:String):
-	for i in get_children():
-		remove_child(i)
+	for i in CL.get_children():
+		CL.remove_child(i)
 		i.queue_free()
 	var inst
 	
@@ -23,22 +25,28 @@ func SwitchUI(ui_id:String):
 		
 		"MainMenu":
 			inst=main_menu.instantiate()
+			
 			pass
 		"Settings":
 			inst=settings.instantiate()
 			pass
 		"ConnectionGrid":
 			inst=connection_grid.instantiate()
+			
 			pass
 		"Lobby":
 			inst=lobby.instantiate()
+			
 			pass
 		"InGame":
 			inst=in_game_ui.instantiate()
+			
 			pass
 		"MapEditor":
 			inst=map_editor.instantiate()
+			
 			pass
 	
-	add_child(inst)
+	CL.add_child(inst)
+	
 	

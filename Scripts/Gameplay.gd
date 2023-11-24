@@ -84,3 +84,9 @@ func ClearAll():
 		if(i.name==my_node_name):
 			remove_child(i)
 			i.queue_free()
+
+
+func EnableUI(ref:Node):
+		for i in get_children():
+			if(i.name==my_node_name):
+				i.SetUI(ref)

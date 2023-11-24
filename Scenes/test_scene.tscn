@@ -1,8 +1,22 @@
-[gd_scene load_steps=2 format=3 uid="uid://b07rudo74ighw"]
+[gd_scene load_steps=4 format=3 uid="uid://b07rudo74ighw"]
 
 [ext_resource type="PackedScene" uid="uid://dk6nk25xuwvdd" path="res://Assets/Player/Player.tscn" id="1_hvkrc"]
+[ext_resource type="PackedScene" uid="uid://l55nmkxhboi5" path="res://Assets/PlayerPuppet/PlayerPuppet.tscn" id="2_6jgp6"]
+[ext_resource type="PackedScene" uid="uid://bnbbrej7u4fjs" path="res://Assets/LevelBlocks/PLACEHOLDER/PLACEHOLDER.tscn" id="3_u2dkr"]
 
 [node name="test_scene" type="Node2D"]
 
 [node name="Player" parent="." instance=ExtResource("1_hvkrc")]
-position = Vector2(209, 157)
+position = Vector2(-41, 61)
+rotation = 1.96331
+
+[node name="PlayerPuppet" parent="." instance=ExtResource("2_6jgp6")]
+position = Vector2(47, 68)
+
+[node name="Crate" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(2, 75)
+
+[node name="DirectionalLight2D" type="DirectionalLight2D" parent="."]
+rotation = -1.15442
+blend_mode = 1
+max_distance = 1e+07

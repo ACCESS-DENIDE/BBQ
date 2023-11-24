@@ -28,3 +28,7 @@ PlayerData="*res://Scripts/PlayerData.gd"
 [display]
 
 window/stretch/mode="canvas_items"
+
+[rendering]
+
+viewport/transparent_background=true

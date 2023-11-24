@@ -1,8 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://dk6nk25xuwvdd"]
+[gd_scene load_steps=7 format=3 uid="uid://dk6nk25xuwvdd"]
 
 [ext_resource type="SpriteFrames" uid="uid://btek5xije1bu4" path="res://Resourses/Animations/player.tres" id="1_20ujp"]
 [ext_resource type="Script" path="res://Assets/Player/Player.gd" id="1_kmj6x"]
 [ext_resource type="Shape2D" uid="uid://bc4vlcp7rq0x4" path="res://Resourses/Collisions/player_col.tres" id="2_qqiq8"]
+[ext_resource type="Texture2D" uid="uid://37k3b8e6t78u" path="res://Resourses/Textures/VolumetricLightPlaceholder.png" id="4_gkcr0"]
+[ext_resource type="Texture2D" uid="uid://cc4wrl1qvkq0v" path="res://Resourses/Textures/LightPlaceholder.webp" id="4_uq5bq"]
+[ext_resource type="Texture2D" uid="uid://dvchh7m7qfxi" path="res://Resourses/Textures/RenderSquereText.tres" id="5_i8xjk"]
 
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 0
@@ -10,6 +13,7 @@ collision_mask = 0
 script = ExtResource("1_kmj6x")
 
 [node name="PlayerAnim" type="AnimatedSprite2D" parent="."]
+light_mask = 2
 texture_filter = 1
 sprite_frames = ExtResource("1_20ujp")
 animation = &"run"
@@ -21,3 +25,22 @@ shape = ExtResource("2_qqiq8")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(4, 4)
+
+[node name="ViewCone" type="PointLight2D" parent="."]
+rotation = -1.5708
+shadow_enabled = true
+shadow_color = Color(0, 0, 0, 1)
+texture = ExtResource("4_gkcr0")
+offset = Vector2(106, 1)
+
+[node name="RenderCircle" type="PointLight2D" parent="."]
+range_item_cull_mask = 2
+texture = ExtResource("5_i8xjk")
+texture_scale = 16.0
+
+[node name="CloseRangeView" type="PointLight2D" parent="."]
+visible = false
+shadow_enabled = true
+shadow_color = Color(0, 0, 0, 1)
+texture = ExtResource("4_uq5bq")
+texture_scale = 0.5

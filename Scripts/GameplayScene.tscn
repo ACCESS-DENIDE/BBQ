@@ -6,9 +6,6 @@
 [node name="GameplayScene" type="Node2D"]
 script = ExtResource("1_k6fb3")
 
-[node name="Crate" parent="." instance=ExtResource("2_21e2q")]
-position = Vector2(99, 54)
-
 [node name="Entitys" type="Node2D" parent="."]
 
 [node name="Statics" type="Node2D" parent="."]
@@ -16,5 +13,12 @@ position = Vector2(99, 54)
 [node name="PingTime" type="Timer" parent="."]
 wait_time = 5.0
 autostart = true
+
+[node name="Hider" type="DirectionalLight2D" parent="."]
+blend_mode = 1
+max_distance = 1e+06
+
+[node name="Crate" parent="." instance=ExtResource("2_21e2q")]
+position = Vector2(39, 59)
 
 [connection signal="timeout" from="PingTime" to="." method="OnPingTime"]

@@ -7,6 +7,9 @@ var net_id:int
 
 @onready var player_anim = $PlayerAnim
 
+@onready var camera_2d:Camera2D = $Camera2D
+
+
 
 func _physics_process(_delta):
 	
@@ -47,3 +50,7 @@ func _physics_process(_delta):
 	Networking.SyncPosPlayer(name, position, direction, rotation)
 	
 	
+
+var UI
+func SetUI(ref:Node):
+	get_viewport().add_child(ref)

@@ -1,9 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://l55nmkxhboi5"]
+[gd_scene load_steps=4 format=3 uid="uid://l55nmkxhboi5"]
 
+[ext_resource type="Script" path="res://Assets/PlayerPuppet/PlayerPuppet.gd" id="1_attv0"]
 [ext_resource type="SpriteFrames" uid="uid://btek5xije1bu4" path="res://Resourses/Animations/player.tres" id="1_bbt0i"]
 [ext_resource type="Shape2D" uid="uid://bc4vlcp7rq0x4" path="res://Resourses/Collisions/player_col.tres" id="2_syqsg"]
 
 [node name="PlayerPuppet" type="CharacterBody2D"]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_attv0")
 
 [node name="PuppetAnim" type="AnimatedSprite2D" parent="."]
 texture_filter = 1

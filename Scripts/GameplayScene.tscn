@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://dvr4plt7peh4s"]
+
+[ext_resource type="Script" path="res://Scripts/Gameplay.gd" id="1_k6fb3"]
+[ext_resource type="PackedScene" uid="uid://bnbbrej7u4fjs" path="res://Assets/LevelBlocks/PLACEHOLDER/PLACEHOLDER.tscn" id="2_21e2q"]
+
+[node name="GameplayScene" type="Node2D"]
+script = ExtResource("1_k6fb3")
+
+[node name="Crate" parent="." instance=ExtResource("2_21e2q")]
+position = Vector2(99, 54)
+
+[node name="Entitys" type="Node2D" parent="."]
+
+[node name="Statics" type="Node2D" parent="."]
+
+[node name="PingTime" type="Timer" parent="."]
+wait_time = 5.0
+autostart = true
+
+[connection signal="timeout" from="PingTime" to="." method="OnPingTime"]

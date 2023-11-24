@@ -1,9 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://dk6nk25xuwvdd"]
+[gd_scene load_steps=4 format=3 uid="uid://dk6nk25xuwvdd"]
 
 [ext_resource type="SpriteFrames" uid="uid://btek5xije1bu4" path="res://Resourses/Animations/player.tres" id="1_20ujp"]
+[ext_resource type="Script" path="res://Assets/Player/Player.gd" id="1_kmj6x"]
 [ext_resource type="Shape2D" uid="uid://bc4vlcp7rq0x4" path="res://Resourses/Collisions/player_col.tres" id="2_qqiq8"]
 
 [node name="Player" type="CharacterBody2D"]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_kmj6x")
 
 [node name="PlayerAnim" type="AnimatedSprite2D" parent="."]
 texture_filter = 1

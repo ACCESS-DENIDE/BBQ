@@ -223,16 +223,20 @@ func OnReadySwitchDown():
 
 
 func CheckReady():
-	var am:int=0
-	var ready_am:int=0
-	for i in player_in_lobby.values():
-		am+=1;
-		if(i["ready"]):
-			ready_am+=1;
-	
-	ready_amount.text=str(ready_am)+"/"+str(am)
-	lobby_params["Ready"]=str(ready_am)+"/"+str(am)
-	Networking.LobbyUpdate(lobby_params)
+	if(Networking.is_authority):
+		var am:int=0
+		var ready_am:int=0
+		for i in player_in_lobby.values():
+			am+=1;
+			if(i["ready"]):
+				ready_am+=1;
+		
+		ready_amount.text=str(ready_am)+"/"+str(am)
+		lobby_params["Ready"]=str(ready_am)+"/"+str(am)
+		Networking.LobbyUpdate(lobby_params)
+		
+		if(am==ready_am):
+			Gameplay.StartGame("path", player_in_lobby)
 
 func OnSetNameDown():
 	display_name=$Grid/SubGrid/Text_name.text

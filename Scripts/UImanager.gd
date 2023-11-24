@@ -16,6 +16,9 @@ func SwitchUI(ui_id:String):
 		remove_child(i)
 		i.queue_free()
 	var inst
+	
+	
+	
 	match ui_id:
 		
 		"MainMenu":

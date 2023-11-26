@@ -19,6 +19,6 @@ blend_mode = 1
 max_distance = 1e+06
 
 [node name="Crate" parent="." instance=ExtResource("2_21e2q")]
-position = Vector2(39, 59)
+position = Vector2(1, 1)
 
 [connection signal="timeout" from="PingTime" to="." method="OnPingTime"]

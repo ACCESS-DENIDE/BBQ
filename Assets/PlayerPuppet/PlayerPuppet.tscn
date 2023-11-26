@@ -5,12 +5,16 @@
 [ext_resource type="Shape2D" uid="uid://bc4vlcp7rq0x4" path="res://Resourses/Collisions/player_col.tres" id="2_syqsg"]
 
 [node name="PlayerPuppet" type="CharacterBody2D"]
+z_index = 1
+rotation = -0.00276431
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("1_attv0")
 
 [node name="PuppetAnim" type="AnimatedSprite2D" parent="."]
+z_index = 1
 texture_filter = 1
+use_parent_material = true
 sprite_frames = ExtResource("1_bbt0i")
 animation = &"run"
 

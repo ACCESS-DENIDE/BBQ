@@ -8,8 +8,6 @@
 [ext_resource type="Texture2D" uid="uid://dvchh7m7qfxi" path="res://Resourses/Textures/RenderSquereText.tres" id="5_i8xjk"]
 
 [node name="Player" type="CharacterBody2D"]
-collision_layer = 0
-collision_mask = 0
 script = ExtResource("1_kmj6x")
 
 [node name="PlayerAnim" type="AnimatedSprite2D" parent="."]
@@ -30,17 +28,32 @@ zoom = Vector2(4, 4)
 rotation = -1.5708
 shadow_enabled = true
 shadow_color = Color(0, 0, 0, 1)
+shadow_filter_smooth = 64.0
 texture = ExtResource("4_gkcr0")
-offset = Vector2(106, 1)
+offset = Vector2(318, 5)
+texture_scale = 3.0
 
 [node name="RenderCircle" type="PointLight2D" parent="."]
 range_item_cull_mask = 2
 texture = ExtResource("5_i8xjk")
-texture_scale = 16.0
+texture_scale = 32.0
 
 [node name="CloseRangeView" type="PointLight2D" parent="."]
-visible = false
 shadow_enabled = true
 shadow_color = Color(0, 0, 0, 1)
 texture = ExtResource("4_uq5bq")
-texture_scale = 0.5
+texture_scale = 0.62
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -144.0
+offset_top = -81.0
+offset_right = -144.0
+offset_bottom = -81.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 1, 0, 1)

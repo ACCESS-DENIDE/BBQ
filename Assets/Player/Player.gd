@@ -50,6 +50,16 @@ func _physics_process(_delta):
 	Networking.SyncPosPlayer(name, position, direction, rotation)
 	
 	
+	if(Input.is_action_just_pressed("ZoomIn")):
+		if(camera_2d.zoom.x<4):
+			camera_2d.zoom+=Vector2(0.5, 0.5)
+		
+	
+	if(Input.is_action_just_pressed("ZooomOut")):
+		if(camera_2d.zoom.x>1):
+			camera_2d.zoom-=Vector2(0.5, 0.5)
+		
+	
 
 var UI
 func SetUI(ref:Node):

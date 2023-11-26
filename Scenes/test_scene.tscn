@@ -1,22 +1,118 @@
-[gd_scene load_steps=4 format=3 uid="uid://b07rudo74ighw"]
+[gd_scene load_steps=5 format=3 uid="uid://b07rudo74ighw"]
 
 [ext_resource type="PackedScene" uid="uid://dk6nk25xuwvdd" path="res://Assets/Player/Player.tscn" id="1_hvkrc"]
 [ext_resource type="PackedScene" uid="uid://l55nmkxhboi5" path="res://Assets/PlayerPuppet/PlayerPuppet.tscn" id="2_6jgp6"]
 [ext_resource type="PackedScene" uid="uid://bnbbrej7u4fjs" path="res://Assets/LevelBlocks/PLACEHOLDER/PLACEHOLDER.tscn" id="3_u2dkr"]
+[ext_resource type="Texture2D" uid="uid://bboxul6o21cwo" path="res://Resourses/Textures/FlorTilemapTest.png" id="4_vdqu1"]
 
 [node name="test_scene" type="Node2D"]
 
 [node name="Player" parent="." instance=ExtResource("1_hvkrc")]
-position = Vector2(-41, 61)
-rotation = 1.96331
+position = Vector2(-345, 47)
+rotation = 1.80971
 
 [node name="PlayerPuppet" parent="." instance=ExtResource("2_6jgp6")]
-position = Vector2(47, 68)
+position = Vector2(-161, 22)
+rotation = 1.24503
 
 [node name="Crate" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(2, 75)
+position = Vector2(-3, 0)
 
 [node name="DirectionalLight2D" type="DirectionalLight2D" parent="."]
 rotation = -1.15442
-blend_mode = 1
+color = Color(0, 0, 0, 1)
+blend_mode = 2
+shadow_color = Color(0.435294, 0.372549, 0.439216, 1)
 max_distance = 1e+07
+
+[node name="Crate2" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(140, 256)
+
+[node name="Crate3" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(139, 222)
+
+[node name="Crate4" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(135, 190)
+
+[node name="Crate5" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(135, 157)
+
+[node name="Crate6" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(135, 127)
+
+[node name="Crate7" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(63, 125)
+
+[node name="Crate8" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(31, 125)
+
+[node name="Crate9" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(0, 125)
+
+[node name="Crate10" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(0, 94)
+
+[node name="Crate11" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(0, 62)
+
+[node name="Crate12" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(0, 31)
+
+[node name="Crate13" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(-100, 190)
+
+[node name="Crate14" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(-100, 226)
+
+[node name="Crate15" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(-96, 255)
+
+[node name="Crate16" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(-58, 254)
+
+[node name="Crate17" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(-24, 256)
+
+[node name="Crate18" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(8, 256)
+
+[node name="Crate19" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(145, -3)
+
+[node name="Crate20" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(142, 30)
+
+[node name="Crate21" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(137, 62)
+
+[node name="Crate22" parent="." instance=ExtResource("3_u2dkr")]
+position = Vector2(134, 92)
+
+[node name="FlorTilemapTest4" type="Sprite2D" parent="."]
+z_index = -1
+texture_filter = 1
+position = Vector2(9, 437)
+texture = ExtResource("4_vdqu1")
+metadata/_edit_lock_ = true
+
+[node name="FlorTilemapTest3" type="Sprite2D" parent="."]
+z_index = -1
+texture_filter = 1
+position = Vector2(-311, 437)
+texture = ExtResource("4_vdqu1")
+metadata/_edit_lock_ = true
+
+[node name="FlorTilemapTest2" type="Sprite2D" parent="."]
+light_mask = 2
+z_index = -1
+texture_filter = 1
+position = Vector2(-311, 117)
+texture = ExtResource("4_vdqu1")
+metadata/_edit_lock_ = true
+
+[node name="FlorTilemapTest" type="Sprite2D" parent="."]
+z_index = -1
+texture_filter = 1
+position = Vector2(8, 117)
+texture = ExtResource("4_vdqu1")
+metadata/_edit_lock_ = true

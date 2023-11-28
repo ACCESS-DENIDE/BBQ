@@ -14,7 +14,6 @@ script = ExtResource("1_attv0")
 [node name="PuppetAnim" type="AnimatedSprite2D" parent="."]
 z_index = 1
 texture_filter = 1
-use_parent_material = true
 sprite_frames = ExtResource("1_bbt0i")
 animation = &"run"
 

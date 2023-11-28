@@ -1,118 +1,29 @@
-[gd_scene load_steps=5 format=3 uid="uid://b07rudo74ighw"]
+[gd_scene load_steps=4 format=3 uid="uid://b07rudo74ighw"]
 
-[ext_resource type="PackedScene" uid="uid://dk6nk25xuwvdd" path="res://Assets/Player/Player.tscn" id="1_hvkrc"]
-[ext_resource type="PackedScene" uid="uid://l55nmkxhboi5" path="res://Assets/PlayerPuppet/PlayerPuppet.tscn" id="2_6jgp6"]
-[ext_resource type="PackedScene" uid="uid://bnbbrej7u4fjs" path="res://Assets/LevelBlocks/PLACEHOLDER/PLACEHOLDER.tscn" id="3_u2dkr"]
-[ext_resource type="Texture2D" uid="uid://bboxul6o21cwo" path="res://Resourses/Textures/FlorTilemapTest.png" id="4_vdqu1"]
+[ext_resource type="Script" path="res://Scenes/test_scene.gd" id="1_gomwe"]
+[ext_resource type="PackedScene" uid="uid://cua8ivyoc2iea" path="res://Assets/PlayerComplex/PlayerComplex.tscn" id="4_76vy7"]
+[ext_resource type="TileSet" uid="uid://rvj7anb8c7l6" path="res://Resourses/TileMaps/MapObjects.tres" id="6_auptm"]
 
 [node name="test_scene" type="Node2D"]
-
-[node name="Player" parent="." instance=ExtResource("1_hvkrc")]
-position = Vector2(-345, 47)
-rotation = 1.80971
-
-[node name="PlayerPuppet" parent="." instance=ExtResource("2_6jgp6")]
-position = Vector2(-161, 22)
-rotation = 1.24503
-
-[node name="Crate" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(-3, 0)
+script = ExtResource("1_gomwe")
 
 [node name="DirectionalLight2D" type="DirectionalLight2D" parent="."]
+visible = false
 rotation = -1.15442
+enabled = false
 color = Color(0, 0, 0, 1)
 blend_mode = 2
 shadow_color = Color(0.435294, 0.372549, 0.439216, 1)
 max_distance = 1e+07
 
-[node name="Crate2" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(140, 256)
+[node name="TileMap" type="TileMap" parent="."]
+z_index = -2
+tile_set = ExtResource("6_auptm")
+format = 2
+layer_0/modulate = Color(0.501961, 0.501961, 0.501961, 1)
+layer_0/tile_data = PackedInt32Array(65535, 0, 0, 0, 0, 0, 1, 196608, 0, -65535, 0, 0, -65536, 0, 0, -1, 0, 0, -2, 0, 0, 65534, 0, 0, 2, 0, 0, 65538, 0, 0, 65537, 0, 0, 65536, 131072, 0, 131071, 65536, 0, 131070, 0, 0, 131069, 0, 0, 65533, 0, 0, -3, 0, 0, -65538, 0, 0, -65537, 0, 0, -131072, 0, 0, -131071, 0, 0, -65534, 0, 0, -131070, 0, 0, -65539, 0, 0, -65540, 0, 0, -4, 0, 0, 196605, 0, 0, 131068, 0, 0, 65532, 0, 0, 196604, 0, 0, 196606, 0, 0, 196607, 0, 0, 131072, 0, 0, 131073, 196608, 0, 131074, 0, 0, 131075, 0, 0, 65539, 0, 0, 3, 0, 0, -65533, 0, 0, -131069, 0, 0, -196605, 0, 0, -196606, 0, 0, -196607, 0, 0, -196608, 0, 0, -131073, 0, 0, -131074, 0, 0, -131075, 0, 0, -131076, 0, 0, -131077, 0, 0, -65541, 0, 0, -5, 0, 0, 65531, 0, 0, 131067, 0, 0, 196603, 0, 0, 262139, 0, 0, 262140, 0, 0, 262141, 0, 0, 262142, 0, 0, 262143, 0, 0, 196608, 0, 0, 196609, 0, 0, 196610, 0, 0, 196611, 0, 0, 196612, 196608, 0, 131076, 196608, 0, 65540, 196608, 0, 4, 196608, 0, -65532, 196608, 0, -131068, 196608, 0, -196604, 196608, 0, -262140, 196608, 0, -262141, 196608, 0, -262142, 196608, 0, -262143, 196608, 0, -262144, 196608, 0, -196609, 196608, 0, -196610, 196608, 0, -196611, 196608, 0, -196612, 196608, 0, -196613, 196608, 0, 262138, 196608, 0, 196602, 196608, 0, 131066, 196608, 0, 65530, 196608, 0, -6, 196608, 0, -65542, 196608, 0, -131078, 196608, 0, -196614, 196608, 0, -262150, 65536, 0, -262148, 65536, 0, -262146, 65536, 0, -327680, 65536, 0, -327678, 65536, 0, -327676, 65536, 0, -196603, 65536, 0, -65531, 65536, 0, 65541, 65536, 0, 196613, 65536, 0, -327675, 65536, 0)
 
-[node name="Crate3" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(139, 222)
-
-[node name="Crate4" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(135, 190)
-
-[node name="Crate5" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(135, 157)
-
-[node name="Crate6" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(135, 127)
-
-[node name="Crate7" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(63, 125)
-
-[node name="Crate8" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(31, 125)
-
-[node name="Crate9" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(0, 125)
-
-[node name="Crate10" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(0, 94)
-
-[node name="Crate11" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(0, 62)
-
-[node name="Crate12" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(0, 31)
-
-[node name="Crate13" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(-100, 190)
-
-[node name="Crate14" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(-100, 226)
-
-[node name="Crate15" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(-96, 255)
-
-[node name="Crate16" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(-58, 254)
-
-[node name="Crate17" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(-24, 256)
-
-[node name="Crate18" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(8, 256)
-
-[node name="Crate19" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(145, -3)
-
-[node name="Crate20" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(142, 30)
-
-[node name="Crate21" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(137, 62)
-
-[node name="Crate22" parent="." instance=ExtResource("3_u2dkr")]
-position = Vector2(134, 92)
-
-[node name="FlorTilemapTest4" type="Sprite2D" parent="."]
-z_index = -1
-texture_filter = 1
-position = Vector2(9, 437)
-texture = ExtResource("4_vdqu1")
-metadata/_edit_lock_ = true
-
-[node name="FlorTilemapTest3" type="Sprite2D" parent="."]
-z_index = -1
-texture_filter = 1
-position = Vector2(-311, 437)
-texture = ExtResource("4_vdqu1")
-metadata/_edit_lock_ = true
-
-[node name="FlorTilemapTest2" type="Sprite2D" parent="."]
-light_mask = 2
-z_index = -1
-texture_filter = 1
-position = Vector2(-311, 117)
-texture = ExtResource("4_vdqu1")
-metadata/_edit_lock_ = true
-
-[node name="FlorTilemapTest" type="Sprite2D" parent="."]
-z_index = -1
-texture_filter = 1
-position = Vector2(8, 117)
-texture = ExtResource("4_vdqu1")
-metadata/_edit_lock_ = true
+[node name="PlayerComplex" parent="." node_paths=PackedStringArray("t_map") instance=ExtResource("4_76vy7")]
+t_map = NodePath("../TileMap")
+t_size = 12
+t_origin = -6

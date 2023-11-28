@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://dvr4plt7peh4s"]
+[gd_scene load_steps=2 format=3 uid="uid://dvr4plt7peh4s"]
 
 [ext_resource type="Script" path="res://Scripts/Gameplay.gd" id="1_k6fb3"]
-[ext_resource type="PackedScene" uid="uid://bnbbrej7u4fjs" path="res://Assets/LevelBlocks/PLACEHOLDER/PLACEHOLDER.tscn" id="2_21e2q"]
 
 [node name="GameplayScene" type="Node2D"]
 script = ExtResource("1_k6fb3")
@@ -15,10 +14,8 @@ wait_time = 5.0
 autostart = true
 
 [node name="Hider" type="DirectionalLight2D" parent="."]
+visible = false
 blend_mode = 1
 max_distance = 1e+06
-
-[node name="Crate" parent="." instance=ExtResource("2_21e2q")]
-position = Vector2(1, 1)
 
 [connection signal="timeout" from="PingTime" to="." method="OnPingTime"]

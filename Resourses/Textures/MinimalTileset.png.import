@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cc4wrl1qvkq0v"
-path="res://.godot/imported/LightPlaceholder.webp-da94d34d692c0d5d4c4aa387c45dc1b6.ctex"
+uid="uid://cxyi76ohuy21o"
+path="res://.godot/imported/MinimalTileset.png-5ac483df3166258faabeef787b4ac564.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Resourses/Textures/LightPlaceholder.webp"
-dest_files=["res://.godot/imported/LightPlaceholder.webp-da94d34d692c0d5d4c4aa387c45dc1b6.ctex"]
+source_file="res://Resourses/Textures/MinimalTileset.png"
+dest_files=["res://.godot/imported/MinimalTileset.png-5ac483df3166258faabeef787b4ac564.ctex"]
 
 [params]
 

@@ -55,4 +55,22 @@ shield
 invincibility
 
 
+###### MAP BLOCKS(NON INTERRACTABLE)
+
+## FLOOR
+Plank
+Concrete
+Metal
+Dirt
+Grass
+
+## WALS
+
+BRICK
+WOOD
+GLASS
+SPACER
+CONCRETE
+
+
 ### NOTES ###

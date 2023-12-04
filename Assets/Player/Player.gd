@@ -10,8 +10,12 @@ var net_id:int
 @onready var camera_2d:Camera2D = $Camera2D
 @export var my_complex:Node2D
 
+var disabled=true
 
 func _physics_process(_delta):
+	
+	if(disabled):
+		return
 	
 	var direction:Vector2=Vector2(0,0)
 	

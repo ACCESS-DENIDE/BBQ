@@ -1,6 +1,7 @@
 extends Node
 
 var is_authority:bool
+var is_online:bool
 
 var lobby_ui_ref
 
@@ -9,6 +10,7 @@ var ping_await={}
 #### NETWORK PROCESS
 
 func _ready():
+	is_online=false
 	multiplayer.connected_to_server.connect(ConnectedToServer)
 	multiplayer.peer_connected.connect(NewPeerConnected)
 	multiplayer.peer_disconnected.connect(PeerDisconnected)
@@ -33,7 +35,7 @@ func ConnectTo(ip:String, port:int):
 
 func Host(port:int):
 	is_authority=true
-	
+	is_online=true
 	var peer = ENetMultiplayerPeer.new()
 	peer.create_server(port)
 	if peer.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED:
@@ -42,6 +44,7 @@ func Host(port:int):
 	multiplayer.multiplayer_peer = peer
 
 func Leave():
+	is_online=false
 	multiplayer.multiplayer_peer=null
 	pass
 
@@ -51,6 +54,7 @@ func ConnectedToServer():
 	pass
 
 func ServerDisconnected():
+	is_online=false
 	multiplayer.multiplayer_peer=null
 	UImanager.SwitchUI("MainMenu")
 	Gameplay.ClearAll()
@@ -80,6 +84,8 @@ func PeerDisconnected(peer:int):
 ##### PLAYER DATA SYNCER
 
 func SyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float):
+	if(!is_online):
+		return
 	if(is_authority):
 		rpc("SetSyncPosPlayer", id, pos, vel, rot)
 	else:
@@ -87,6 +93,8 @@ func SyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float):
 
 
 func SwitchPlayerAnim(id:String, id_anim:int):
+	if(!is_online):
+		return
 	if(is_authority):
 		Gameplay.SetAnim(id, id_anim)
 		rpc("SetAnim", id, id_anim)
@@ -96,6 +104,8 @@ func SwitchPlayerAnim(id:String, id_anim:int):
 
 @rpc("any_peer", "unreliable")
 func RequestSetAnim(id:String, id_anim:int):
+	if(!is_online):
+		return
 	if(id=="player#"+str(multiplayer.get_remote_sender_id())):
 		Gameplay.SetAnim(id, id_anim)
 		rpc("SetAnim", id, id_anim)
@@ -103,13 +113,16 @@ func RequestSetAnim(id:String, id_anim:int):
 
 @rpc("authority", "unreliable")
 func SetAnim(id:String, id_anim:int):
+	if(!is_online):
+		return
 	Gameplay.SetAnim(id, id_anim)
 	pass
 
 
 @rpc("any_peer", "unreliable")
 func CallSyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float):
-	
+	if(!is_online):
+		return
 	var delta=PlayerData.GetPlayerDeltatime(multiplayer.get_remote_sender_id(), Time.get_ticks_msec())
 	if(delta==0):
 		return
@@ -120,6 +133,8 @@ func CallSyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float):
 
 @rpc("authority", "unreliable")
 func SetSyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float):
+	if(!is_online):
+		return
 	Gameplay.SyncPuppet(id, pos, vel, rot, 0)
 
 ### SERVER PROCESSING
@@ -130,16 +145,22 @@ func Kick(id:int, reason:String):
 
 
 func StartGame(map_data:String, player_in_lobby:Dictionary):
+	if(!is_online):
+		return
 	rpc("StartGameSignal",map_data, player_in_lobby)
 
 @rpc("authority", "reliable")
 func StartGameSignal(map_data:String, player_in_lobby:Dictionary):
+	if(!is_online):
+		return
 	Gameplay.StartGame(map_data, player_in_lobby)
 
 
 ######LOBBY DATA TRANSMISSION
 
 func LobbyDataSync(val:String, id:int):
+	if(!is_online):
+		return
 	if(is_authority):
 		rpc("RecLobbyDataSync", val, id)
 	else:
@@ -148,16 +169,22 @@ func LobbyDataSync(val:String, id:int):
 
 
 func SetPlayerList():
+	if(!is_online):
+		return
 	if(is_authority):
 		rpc("SetShortPlayerList", lobby_ui_ref.GetShortPlayerList())
 
 
 
 func LobbyUpdate(dat:Dictionary):
+	if(!is_online):
+		return
 	rpc("UpdateLobbyData", dat)
 
 @rpc("any_peer", "reliable")
 func SendLobbyDataSync(val:String, id:int):
+	if(!is_online):
+		return
 	if(id==0 && id==1):
 		return
 	
@@ -169,16 +196,21 @@ func SendLobbyDataSync(val:String, id:int):
 
 @rpc("authority", "reliable")
 func SetShortPlayerList(list:Array):
+	if(!is_online):
+		return
 	lobby_ui_ref.UpdatePlayerList(list)
 
 @rpc("authority", "reliable")
 func RecLobbyDataSync(val:String, id:int):
-	
+	if(!is_online):
+		return
 	pass
 
 
 @rpc("authority", "reliable")
 func UpdateLobbyData(dat:Dictionary):
+	if(!is_online):
+		return
 	lobby_ui_ref.DisplayData(dat)
 
 
@@ -186,22 +218,30 @@ func UpdateLobbyData(dat:Dictionary):
 ########PING
 
 func MassPing():
+	if(!is_online):
+		return
 	for i in PlayerData.pings.keys():
 		Ping(i)
 
 
 func Ping(id:int):
+	if(!is_online):
+		return
 	ping_await[id]=Time.get_ticks_msec()
 	rpc_id(id, "PingInit")
 	pass
 
 @rpc("any_peer", "reliable")
 func PingInit():
+	if(!is_online):
+		return
 	rpc_id(multiplayer.get_remote_sender_id(), "PingAns")
 	pass
 
 @rpc("any_peer", "reliable")
 func PingAns():
+	if(!is_online):
+		return
 	var id=multiplayer.get_remote_sender_id()
 	PlayerData.pings[id]=Time.get_ticks_msec()-ping_await[id]
 	ping_await.erase(id)

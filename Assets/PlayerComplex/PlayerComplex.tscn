@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://cua8ivyoc2iea"]
+[gd_scene load_steps=12 format=3 uid="uid://cua8ivyoc2iea"]
 
 [ext_resource type="Script" path="res://Assets/PlayerComplex/PlayerComplex.gd" id="1_5he4p"]
 [ext_resource type="PackedScene" uid="uid://dk6nk25xuwvdd" path="res://Assets/Player/Player.tscn" id="2_wxjpn"]
@@ -6,7 +6,6 @@
 [ext_resource type="Shader" path="res://Resourses/Shaders/LitKeyer.gdshader" id="3_n47go"]
 [ext_resource type="TileSet" uid="uid://rvj7anb8c7l6" path="res://Resourses/TileMaps/MapObjects.tres" id="4_e6qsf"]
 [ext_resource type="Texture2D" uid="uid://37k3b8e6t78u" path="res://Resourses/Textures/VolumetricLightPlaceholder.png" id="5_eb3gb"]
-[ext_resource type="PackedScene" uid="uid://l55nmkxhboi5" path="res://Assets/PlayerPuppet/PlayerPuppet.tscn" id="7_ujoqp"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_4aqmh"]
 viewport_path = NodePath("LitView")
@@ -46,18 +45,24 @@ render_target_update_mode = 4
 
 [node name="Liter" type="Node2D" parent="LitView"]
 
-[node name="TileMap" type="TileMap" parent="LitView/Liter"]
-material = SubResource("ShaderMaterial_rheyc")
-tile_set = ExtResource("4_e6qsf")
-format = 2
-layer_0/tile_data = PackedInt32Array(65535, 0, 0, 0, 0, 0, -65536, 0, 0, -1, 0, 0, -2, 0, 0, 65534, 0, 0, 131070, 0, 0, 131071, 0, 0, 65536, 0, 0, 65537, 0, 0, 1, 0, 0, -65535, 0, 0, -131071, 0, 0, -131072, 0, 0, -65537, 0, 0, -65538, 0, 0)
-
 [node name="PointLight2D" type="PointLight2D" parent="LitView/Liter"]
 energy = 2.26
 blend_mode = 1
 shadow_enabled = true
 texture = ExtResource("5_eb3gb")
 texture_scale = 2.55
+
+[node name="TileMap" type="TileMap" parent="LitView/Liter"]
+material = SubResource("ShaderMaterial_rheyc")
+tile_set = ExtResource("4_e6qsf")
+format = 2
+layer_1/name = ""
+layer_1/enabled = true
+layer_1/modulate = Color(1, 1, 1, 1)
+layer_1/y_sort_enabled = false
+layer_1/y_sort_origin = 0
+layer_1/z_index = 0
+layer_1/tile_data = PackedInt32Array()
 
 [node name="HidePort" type="SubViewport" parent="."]
 transparent_bg = true
@@ -66,19 +71,22 @@ render_target_update_mode = 4
 
 [node name="HiddenOBJs" type="Node2D" parent="HidePort"]
 
-[node name="PlayerPuppet" parent="HidePort/HiddenOBJs" instance=ExtResource("7_ujoqp")]
-position = Vector2(174, 110)
-
-[node name="PlayerPuppet2" parent="HidePort/HiddenOBJs" instance=ExtResource("7_ujoqp")]
-position = Vector2(0, 60)
-
 [node name="TileMap2" type="TileMap" parent="HidePort/HiddenOBJs"]
 tile_set = ExtResource("4_e6qsf")
 format = 2
-layer_0/tile_data = PackedInt32Array(-65537, 196608, 0)
+layer_1/name = ""
+layer_1/enabled = true
+layer_1/modulate = Color(1, 1, 1, 1)
+layer_1/y_sort_enabled = false
+layer_1/y_sort_origin = 0
+layer_1/z_index = 0
+layer_1/tile_data = PackedInt32Array()
 
-[node name="FOVView" type="Sprite2D" parent="."]
+[node name="ViewComponent" type="Node2D" parent="."]
+
+[node name="FOVView" type="Sprite2D" parent="ViewComponent"]
 material = SubResource("ShaderMaterial_58x6p")
 texture = SubResource("ViewportTexture_hm0hn")
 
-[node name="Camera2D2" type="Camera2D" parent="."]
+[node name="Camera2D2" type="Camera2D" parent="ViewComponent"]
+enabled = false

@@ -25,5 +25,3 @@ layer_0/tile_data = PackedInt32Array(65535, 0, 0, 0, 0, 0, 1, 196608, 0, -65535,
 
 [node name="PlayerComplex" parent="." node_paths=PackedStringArray("t_map") instance=ExtResource("4_76vy7")]
 t_map = NodePath("../TileMap")
-t_size = 12
-t_origin = -6

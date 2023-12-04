@@ -11,7 +11,7 @@ var settings=preload("res://UIs/Settings/SettingsUI.tscn")
 var connection_grid=preload("res://UIs/ConnectionGrid/ConnectionGrid.tscn")
 var in_game_ui=preload("res://UIs/InGame/InGameUI.tscn")
 var lobby=preload("res://UIs/Lobby/LobbyUI.tscn")
-var map_editor=preload("res://UIs/MapEditor/MapEditor.tscn")
+var map_editor=preload("res://UIs/MapEditor/MapEditorUI.tscn")
 
 func SwitchUI(ui_id:String):
 	for i in CL.get_children():

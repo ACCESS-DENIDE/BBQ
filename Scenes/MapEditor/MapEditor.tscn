@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://cy2dj437ke7vm"]
+
+[ext_resource type="TileSet" uid="uid://rvj7anb8c7l6" path="res://Resourses/TileMaps/MapObjects.tres" id="1_fr1h2"]
+[ext_resource type="Script" path="res://Scenes/MapEditor/MapEditor.gd" id="2_xnh1s"]
+
+[node name="MapEditor" type="TileMap"]
+tile_set = ExtResource("1_fr1h2")
+format = 2
+layer_0/name = "Floor"
+layer_1/name = "Wals"
+layer_1/enabled = true
+layer_1/modulate = Color(1, 1, 1, 1)
+layer_1/y_sort_enabled = false
+layer_1/y_sort_origin = 0
+layer_1/z_index = 0
+layer_1/tile_data = PackedInt32Array()
+layer_2/name = "PreProcess"
+layer_2/enabled = true
+layer_2/modulate = Color(1, 1, 1, 0.498039)
+layer_2/y_sort_enabled = false
+layer_2/y_sort_origin = 0
+layer_2/z_index = 0
+layer_2/tile_data = PackedInt32Array()
+script = ExtResource("2_xnh1s")
+
+[node name="Camera2D" type="Camera2D" parent="."]

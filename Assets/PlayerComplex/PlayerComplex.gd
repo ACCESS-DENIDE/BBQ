@@ -3,6 +3,9 @@ extends Node2D
 @export var t_map:TileMap
 
 
+func _process(delta):
+	$LitView/Liter/TileMap.visible=false
+	$LitView/Liter/TileMap.visible=true
 
 func Preload():
 	var ref_map=$LitView/Liter/TileMap
@@ -49,6 +52,7 @@ func UpdatePos(pos:Vector2):
 	$HidePort/HiddenOBJs.position=-pos+Vector2(sz.x/2, sz.y/2)
 	$ViewComponent.position=pos
 	$LitView/Liter/PointLight2D.position=pos
+	
 	pass
 
 var pl_ref

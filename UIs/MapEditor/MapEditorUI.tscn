@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://clx3owvyk3ovs"]
+[gd_scene load_steps=2 format=3 uid="uid://clx3owvyk3ovs"]
+
+[ext_resource type="Script" path="res://UIs/MapEditor/MapEditorUI.gd" id="1_iu4gf"]
 
 [node name="MapEditorUI" type="Control"]
 layout_mode = 3
@@ -7,3 +9,435 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_iu4gf")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 31.0
+grow_horizontal = 2
+
+[node name="BlockSellector" type="ItemList" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = -183.0
+offset_right = 151.0
+grow_vertical = 0
+focus_mode = 0
+item_count = 11
+item_0/text = "Woden Floor"
+item_1/text = "Stone Floor"
+item_2/text = "Metal Floor"
+item_3/text = "Dirt"
+item_4/text = "Grass"
+item_5/text = "Hypsocardboard"
+item_6/text = "Glass"
+item_7/text = "Window"
+item_8/text = "Stone wall"
+item_9/text = "Base"
+item_10/text = "Spawn point"
+
+[node name="UnReDo" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -102.0
+offset_bottom = 40.0
+grow_horizontal = 0
+columns = 2
+
+[node name="Undo" type="Button" parent="UnReDo"]
+layout_mode = 2
+focus_mode = 0
+text = "Undo"
+
+[node name="Redo" type="Button" parent="UnReDo"]
+layout_mode = 2
+focus_mode = 0
+text = "Redo"
+
+[node name="Menu" type="GridContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+columns = 2
+
+[node name="Exit" type="Button" parent="Menu"]
+layout_mode = 2
+focus_mode = 0
+text = "   Exit  "
+
+[node name="File" type="Button" parent="Menu"]
+layout_mode = 2
+focus_mode = 0
+text = "   File   "
+
+[node name="DrawType" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -22.0
+offset_right = 22.0
+offset_bottom = 40.0
+grow_horizontal = 2
+columns = 4
+
+[node name="Pen" type="Button" parent="DrawType"]
+layout_mode = 2
+focus_mode = 0
+text = "P"
+
+[node name="Line" type="Button" parent="DrawType"]
+layout_mode = 2
+focus_mode = 0
+text = "L"
+
+[node name="Squere" type="Button" parent="DrawType"]
+layout_mode = 2
+focus_mode = 0
+text = "S"
+
+[node name="Box" type="Button" parent="DrawType"]
+layout_mode = 2
+focus_mode = 0
+text = "B"
+
+[node name="PropertyEditor" type="GridContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -417.0
+offset_top = -115.0
+grow_horizontal = 0
+grow_vertical = 0
+columns = 2
+
+[node name="ModeLabe" type="Label" parent="PropertyEditor"]
+layout_mode = 2
+text = "Mode:"
+
+[node name="GridContainer" type="GridContainer" parent="PropertyEditor"]
+layout_mode = 2
+columns = 3
+
+[node name="LeftBtn" type="Button" parent="PropertyEditor/GridContainer"]
+layout_mode = 2
+text = "<"
+
+[node name="ModeName" type="Label" parent="PropertyEditor/GridContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Player Spawner"
+horizontal_alignment = 1
+
+[node name="RightBtn" type="Button" parent="PropertyEditor/GridContainer"]
+layout_mode = 2
+text = ">"
+
+[node name="InfoLabe" type="Label" parent="PropertyEditor"]
+layout_mode = 2
+text = "Info:"
+
+[node name="Info" type="Label" parent="PropertyEditor"]
+custom_minimum_size = Vector2(325, 0)
+layout_mode = 2
+text = "Used to spawn players in different modes"
+horizontal_alignment = 2
+
+[node name="CratePerc" type="Label" parent="PropertyEditor"]
+custom_minimum_size = Vector2(95, 0)
+layout_mode = 2
+text = "Crate: 50%"
+
+[node name="BarrelPerc" type="Label" parent="PropertyEditor"]
+layout_mode = 2
+text = "Barrel: 50%"
+horizontal_alignment = 2
+
+[node name="ValLabe" type="Label" parent="PropertyEditor"]
+layout_mode = 2
+text = "Val: "
+
+[node name="Slider" type="HSlider" parent="PropertyEditor"]
+layout_mode = 2
+focus_mode = 0
+value = 50.0
+
+[node name="SaverWindow" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -166.0
+offset_top = -157.0
+offset_right = 166.0
+offset_bottom = 157.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainGrid" type="GridContainer" parent="SaverWindow"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SaveMapLabe" type="Label" parent="SaverWindow/MainGrid"]
+custom_minimum_size = Vector2(215, 0)
+layout_mode = 2
+text = "Save Map"
+horizontal_alignment = 1
+
+[node name="NameGrid" type="GridContainer" parent="SaverWindow/MainGrid"]
+layout_mode = 2
+columns = 2
+
+[node name="MapNameLabe" type="Label" parent="SaverWindow/MainGrid/NameGrid"]
+layout_mode = 2
+text = "Name:"
+
+[node name="MapNameSourse" type="TextEdit" parent="SaverWindow/MainGrid/NameGrid"]
+custom_minimum_size = Vector2(250, 40)
+layout_mode = 2
+placeholder_text = "Name here"
+
+[node name="HSeparator" type="HSeparator" parent="SaverWindow/MainGrid"]
+layout_mode = 2
+
+[node name="ModesGrid" type="GridContainer" parent="SaverWindow/MainGrid"]
+layout_mode = 2
+columns = 2
+
+[node name="CTF" type="Label" parent="SaverWindow/MainGrid/ModesGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "CTF"
+horizontal_alignment = 1
+
+[node name="BF" type="Label" parent="SaverWindow/MainGrid/ModesGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Boss Fight"
+horizontal_alignment = 1
+
+[node name="DM" type="Label" parent="SaverWindow/MainGrid/ModesGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Deathmatch"
+horizontal_alignment = 1
+
+[node name="TDM" type="Label" parent="SaverWindow/MainGrid/ModesGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Team DM"
+horizontal_alignment = 1
+
+[node name="CP" type="Label" parent="SaverWindow/MainGrid/ModesGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "ControlPoint"
+horizontal_alignment = 1
+
+[node name="TAG" type="Label" parent="SaverWindow/MainGrid/ModesGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Tags"
+horizontal_alignment = 1
+
+[node name="CK" type="Label" parent="SaverWindow/MainGrid/ModesGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Confirm Kill"
+horizontal_alignment = 1
+
+[node name="BW" type="Label" parent="SaverWindow/MainGrid/ModesGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Base wars"
+horizontal_alignment = 1
+
+[node name="VIR" type="Label" parent="SaverWindow/MainGrid/ModesGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Virus"
+horizontal_alignment = 1
+
+[node name="RAID" type="Label" parent="SaverWindow/MainGrid/ModesGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Raid"
+horizontal_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="SaverWindow/MainGrid"]
+layout_mode = 2
+
+[node name="TecSettingsGrid" type="GridContainer" parent="SaverWindow/MainGrid"]
+layout_mode = 2
+columns = 2
+
+[node name="MinPropGrid" type="GridContainer" parent="SaverWindow/MainGrid/TecSettingsGrid"]
+layout_mode = 2
+columns = 2
+
+[node name="MinPropLabel" type="Label" parent="SaverWindow/MainGrid/TecSettingsGrid/MinPropGrid"]
+layout_mode = 2
+text = "Min Prop:"
+
+[node name="MinProp" type="SpinBox" parent="SaverWindow/MainGrid/TecSettingsGrid/MinPropGrid"]
+layout_mode = 2
+
+[node name="MaxPropGrid" type="GridContainer" parent="SaverWindow/MainGrid/TecSettingsGrid"]
+layout_mode = 2
+columns = 2
+
+[node name="MaxPropLabe" type="Label" parent="SaverWindow/MainGrid/TecSettingsGrid/MaxPropGrid"]
+layout_mode = 2
+text = "Max Prop:"
+
+[node name="MaxProp" type="SpinBox" parent="SaverWindow/MainGrid/TecSettingsGrid/MaxPropGrid"]
+layout_mode = 2
+
+[node name="MinItemGrid" type="GridContainer" parent="SaverWindow/MainGrid/TecSettingsGrid"]
+layout_mode = 2
+columns = 2
+
+[node name="MinItemLabe" type="Label" parent="SaverWindow/MainGrid/TecSettingsGrid/MinItemGrid"]
+layout_mode = 2
+text = "Min Item:"
+
+[node name="MinItem" type="SpinBox" parent="SaverWindow/MainGrid/TecSettingsGrid/MinItemGrid"]
+layout_mode = 2
+
+[node name="MaxItemGrid" type="GridContainer" parent="SaverWindow/MainGrid/TecSettingsGrid"]
+layout_mode = 2
+columns = 2
+
+[node name="MaxItemLabe" type="Label" parent="SaverWindow/MainGrid/TecSettingsGrid/MaxItemGrid"]
+layout_mode = 2
+text = "Max Item:"
+
+[node name="MaxItem" type="SpinBox" parent="SaverWindow/MainGrid/TecSettingsGrid/MaxItemGrid"]
+layout_mode = 2
+
+[node name="ButtonGrid" type="GridContainer" parent="SaverWindow/MainGrid"]
+layout_mode = 2
+columns = 2
+
+[node name="Cancel" type="Button" parent="SaverWindow/MainGrid/ButtonGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
+
+[node name="Save" type="Button" parent="SaverWindow/MainGrid/ButtonGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Save"
+
+[node name="SaveLoad" type="GridContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Save" type="Button" parent="SaveLoad"]
+layout_mode = 2
+text = "Save"
+
+[node name="Load" type="Button" parent="SaveLoad"]
+layout_mode = 2
+text = "Load
+"
+
+[node name="Cancel" type="Button" parent="SaveLoad"]
+layout_mode = 2
+text = "Cancel"
+
+[connection signal="gui_input" from="." to="." method="OnGuiInpt"]
+[connection signal="mouse_entered" from="Panel" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="Panel" to="." method="UiStopAccess"]
+[connection signal="item_selected" from="BlockSellector" to="." method="BlockSelectorSwitch"]
+[connection signal="mouse_entered" from="BlockSellector" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="BlockSellector" to="." method="UiStopAccess"]
+[connection signal="mouse_entered" from="UnReDo" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="UnReDo" to="." method="UiStopAccess"]
+[connection signal="mouse_entered" from="UnReDo/Undo" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="UnReDo/Undo" to="." method="UiStopAccess"]
+[connection signal="mouse_entered" from="UnReDo/Redo" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="UnReDo/Redo" to="." method="UiStopAccess"]
+[connection signal="mouse_entered" from="Menu" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="Menu" to="." method="UiStopAccess"]
+[connection signal="button_down" from="Menu/Exit" to="." method="OnExitBtnDown"]
+[connection signal="mouse_entered" from="Menu/Exit" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="Menu/Exit" to="." method="UiStopAccess"]
+[connection signal="button_down" from="Menu/File" to="." method="OnFileBtnDown"]
+[connection signal="mouse_entered" from="Menu/File" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="Menu/File" to="." method="UiStopAccess"]
+[connection signal="mouse_entered" from="DrawType" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="DrawType" to="." method="UiStopAccess"]
+[connection signal="button_down" from="DrawType/Pen" to="." method="SelectPen"]
+[connection signal="mouse_entered" from="DrawType/Pen" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="DrawType/Pen" to="." method="UiStopAccess"]
+[connection signal="button_down" from="DrawType/Line" to="." method="SelectLine"]
+[connection signal="mouse_entered" from="DrawType/Line" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="DrawType/Line" to="." method="UiStopAccess"]
+[connection signal="button_down" from="DrawType/Squere" to="." method="SelectSquere"]
+[connection signal="mouse_entered" from="DrawType/Squere" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="DrawType/Squere" to="." method="UiStopAccess"]
+[connection signal="button_down" from="DrawType/Box" to="." method="SelectBox"]
+[connection signal="mouse_entered" from="DrawType/Box" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="DrawType/Box" to="." method="UiStopAccess"]
+[connection signal="gui_input" from="PropertyEditor" to="." method="OnPaddleInput"]
+[connection signal="mouse_entered" from="PropertyEditor" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="PropertyEditor" to="." method="UiStopAccess"]
+[connection signal="mouse_entered" from="PropertyEditor/ModeLabe" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="PropertyEditor/ModeLabe" to="." method="UiStopAccess"]
+[connection signal="mouse_entered" from="PropertyEditor/GridContainer" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="PropertyEditor/GridContainer" to="." method="UiStopAccess"]
+[connection signal="button_down" from="PropertyEditor/GridContainer/LeftBtn" to="." method="OnLeftBtnDown"]
+[connection signal="mouse_entered" from="PropertyEditor/GridContainer/LeftBtn" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="PropertyEditor/GridContainer/LeftBtn" to="." method="UiStopAccess"]
+[connection signal="mouse_entered" from="PropertyEditor/GridContainer/ModeName" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="PropertyEditor/GridContainer/ModeName" to="." method="UiStopAccess"]
+[connection signal="button_up" from="PropertyEditor/GridContainer/RightBtn" to="." method="OnRightBtnDown"]
+[connection signal="mouse_entered" from="PropertyEditor/GridContainer/RightBtn" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="PropertyEditor/GridContainer/RightBtn" to="." method="UiStopAccess"]
+[connection signal="mouse_entered" from="PropertyEditor/InfoLabe" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="PropertyEditor/InfoLabe" to="." method="UiStopAccess"]
+[connection signal="mouse_entered" from="PropertyEditor/Info" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="PropertyEditor/Info" to="." method="UiStopAccess"]
+[connection signal="mouse_entered" from="PropertyEditor/CratePerc" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="PropertyEditor/CratePerc" to="." method="UiStopAccess"]
+[connection signal="mouse_entered" from="PropertyEditor/BarrelPerc" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="PropertyEditor/BarrelPerc" to="." method="UiStopAccess"]
+[connection signal="mouse_entered" from="PropertyEditor/ValLabe" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="PropertyEditor/ValLabe" to="." method="UiStopAccess"]
+[connection signal="mouse_entered" from="PropertyEditor/Slider" to="." method="UiAccess"]
+[connection signal="mouse_exited" from="PropertyEditor/Slider" to="." method="UiStopAccess"]
+[connection signal="value_changed" from="PropertyEditor/Slider" to="." method="OnSliderChange"]
+[connection signal="button_down" from="SaverWindow/MainGrid/ButtonGrid/Cancel" to="." method="OnCancelBtnDown"]
+[connection signal="button_down" from="SaverWindow/MainGrid/ButtonGrid/Save" to="." method="OnBtnSave"]
+[connection signal="button_down" from="SaveLoad/Save" to="." method="OnSaveBtnDown"]
+[connection signal="button_down" from="SaveLoad/Cancel" to="." method="OnCancelBtnDown"]

@@ -50,3 +50,6 @@ func SwitchUI(ui_id:String):
 	CL.add_child(inst)
 	
 	
+
+func GetCurUI()->Node:
+	return CL.get_children()[0]

@@ -1,15 +1,15 @@
 ### GAMEMODES ###
 
-Capture the flag
-Boss fight
-Death match
-Team DM
-Control point
-Tags
-Confirm Kill
-Base wars
-Virus
-Raid (shadow maggots)
+[0]Capture the flag[2 bases]
+[1]Boss fight[2 bases]
+[2]Death match[0 bases]
+[3]Team DM[0 bases]
+[4]Control point[2 bases]
+[5]Tags[0 bases]
+[6]Confirm Kill[2 bases]
+[7]Base wars[2 bases]
+[8]Virus[1 base]
+[9]Raid (shadow maggots)[1 base]
 
 ### ITEMS ###
 

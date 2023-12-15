@@ -7,10 +7,12 @@ var net_id:int
 
 @onready var player_anim = $PlayerAnim
 
-@onready var camera_2d:Camera2D = $Camera2D
 @export var my_complex:Node2D
 
+@export var camera_2d:Camera2D
+
 var disabled=true
+
 
 func _physics_process(_delta):
 	
@@ -20,8 +22,8 @@ func _physics_process(_delta):
 	var direction:Vector2=Vector2(0,0)
 	
 	
-	direction.x = Input.get_axis("ui_left", "ui_right")
-	direction.y = Input.get_axis("ui_up", "ui_down")
+	direction.x = Input.get_axis("MoveLeft", "MoveRight")
+	direction.y = Input.get_axis("MoveUp", "MoveDown")
 	
 	
 	direction=direction.normalized()

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bboxul6o21cwo"
-path="res://.godot/imported/FlorTilemapTest.png-cbde3a750eea383c6e85a19cfb3d018b.ctex"
+uid="uid://dptm1p7f77y6x"
+path="res://.godot/imported/Addons.png-fc9983140f7cd1377602639295c14d83.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Resourses/Textures/FlorTilemapTest.png"
-dest_files=["res://.godot/imported/FlorTilemapTest.png-cbde3a750eea383c6e85a19cfb3d018b.ctex"]
+source_file="res://Resourses/Textures/Addons.png"
+dest_files=["res://.godot/imported/Addons.png-fc9983140f7cd1377602639295c14d83.ctex"]
 
 [params]
 

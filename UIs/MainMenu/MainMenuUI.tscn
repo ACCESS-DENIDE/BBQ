@@ -33,10 +33,16 @@ text = "PLAY"
 layout_mode = 2
 text = "OPTIONS"
 
+[node name="Editor" type="Button" parent="Grid"]
+layout_mode = 2
+text = "MAP EDITOR
+"
+
 [node name="Exit" type="Button" parent="Grid"]
 layout_mode = 2
 text = "EXIT"
 
 [connection signal="button_down" from="Grid/Play" to="." method="OnPlayButtonDown"]
 [connection signal="button_down" from="Grid/Settings" to="." method="OnSettingsButtonDown"]
+[connection signal="button_down" from="Grid/Editor" to="." method="OnEditorButtonDown"]
 [connection signal="button_down" from="Grid/Exit" to="." method="OnExitButtonDown"]

@@ -1,12 +1,23 @@
-[gd_scene load_steps=2 format=3 uid="uid://clx3owvyk3ovs"]
+[gd_scene load_steps=5 format=3 uid="uid://clx3owvyk3ovs"]
 
 [ext_resource type="Script" path="res://UIs/MapEditor/MapEditorUI.gd" id="1_iu4gf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ql2dt"]
+bg_color = Color(0.152941, 0.133333, 0.0156863, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modnk"]
+bg_color = Color(0.152941, 0.133333, 0.0156863, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_23rf8"]
+bg_color = Color(0.152941, 0.133333, 0.0156863, 1)
 
 [node name="MapEditorUI" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -2.0
+offset_right = -2.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_iu4gf")
@@ -187,6 +198,7 @@ offset_right = 166.0
 offset_bottom = 157.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ql2dt")
 
 [node name="MainGrid" type="GridContainer" parent="SaverWindow"]
 layout_mode = 1
@@ -347,7 +359,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Save"
 
-[node name="SaveLoad" type="GridContainer" parent="."]
+[node name="SaveLoad" type="Panel" parent="."]
 visible = false
 layout_mode = 1
 anchors_preset = 8
@@ -355,25 +367,81 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
+offset_left = -44.5
+offset_top = -63.5
+offset_right = 44.5
+offset_bottom = 63.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modnk")
+
+[node name="SaveLoad" type="GridContainer" parent="SaveLoad"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.0
+offset_top = -50.5
+offset_right = 30.0
+offset_bottom = 50.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Save" type="Button" parent="SaveLoad"]
+[node name="Save" type="Button" parent="SaveLoad/SaveLoad"]
 layout_mode = 2
 text = "Save"
 
-[node name="Load" type="Button" parent="SaveLoad"]
+[node name="Load" type="Button" parent="SaveLoad/SaveLoad"]
 layout_mode = 2
 text = "Load
 "
 
-[node name="Cancel" type="Button" parent="SaveLoad"]
+[node name="Cancel" type="Button" parent="SaveLoad/SaveLoad"]
 layout_mode = 2
 text = "Cancel"
+
+[node name="LoaderWindow" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -75.5
+offset_top = -120.5
+offset_right = 75.5
+offset_bottom = 120.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_23rf8")
+
+[node name="GridContainer" type="GridContainer" parent="LoaderWindow"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="AvailibLevels" type="ItemList" parent="LoaderWindow/GridContainer"]
+custom_minimum_size = Vector2(150, 200)
+layout_mode = 2
+allow_reselect = true
+
+[node name="GridContainer" type="GridContainer" parent="LoaderWindow/GridContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="Cancel" type="Button" parent="LoaderWindow/GridContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
+
+[node name="Load" type="Button" parent="LoaderWindow/GridContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Load
+"
 
 [connection signal="gui_input" from="." to="." method="OnGuiInpt"]
 [connection signal="mouse_entered" from="Panel" to="." method="UiAccess"]
@@ -439,5 +507,8 @@ text = "Cancel"
 [connection signal="value_changed" from="PropertyEditor/Slider" to="." method="OnSliderChange"]
 [connection signal="button_down" from="SaverWindow/MainGrid/ButtonGrid/Cancel" to="." method="OnCancelBtnDown"]
 [connection signal="button_down" from="SaverWindow/MainGrid/ButtonGrid/Save" to="." method="OnBtnSave"]
-[connection signal="button_down" from="SaveLoad/Save" to="." method="OnSaveBtnDown"]
-[connection signal="button_down" from="SaveLoad/Cancel" to="." method="OnCancelBtnDown"]
+[connection signal="button_down" from="SaveLoad/SaveLoad/Save" to="." method="OnSaveBtnDown"]
+[connection signal="button_down" from="SaveLoad/SaveLoad/Load" to="." method="LoadOpenerDown"]
+[connection signal="button_down" from="SaveLoad/SaveLoad/Cancel" to="." method="OnCancelBtnDown"]
+[connection signal="button_down" from="LoaderWindow/GridContainer/GridContainer/Cancel" to="." method="OnCancelBtnDown"]
+[connection signal="button_down" from="LoaderWindow/GridContainer/GridContainer/Load" to="." method="OnLoadBtnDown"]

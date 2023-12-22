@@ -1,17 +1,23 @@
 extends Node2D
 
+class_name PlayerSubsys
+
 @export var t_map:TileMap
 
+var pl_ref
+
+func _ready():
+	pl_ref=$Player
+	
 
 func _process(delta):
 	$LitView/Liter/TileMap.visible=false
 	$LitView/Liter/TileMap.visible=true
 
-func Preload():
+func Preload(id_abil:int):
 	var ref_map=$LitView/Liter/TileMap
 	var ref2_map=$HidePort/HiddenOBJs/TileMap2
 	var point_light_2d = $LitView/Liter/PointLight2D
-	pl_ref=$Player
 	#ref_map.position=Vector2(abs(t_origin)*32,abs(t_origin)*32)
 	var sz=$HidePort.get_visible_rect().size
 	$HidePort/HiddenOBJs.position=Vector2(sz.x/2, sz.y/2)
@@ -26,7 +32,11 @@ func Preload():
 			ref2_map.set_pattern(0, Vector2i(i, g), t_map.get_pattern(0, [Vector2i(i, g)]))
 			ref_map.set_pattern(1, Vector2i(i, g), t_map.get_pattern(1, [Vector2i(i, g)]))
 			ref2_map.set_pattern(1, Vector2i(i, g), t_map.get_pattern(1, [Vector2i(i, g)]))
+			ref_map.set_pattern(2, Vector2i(i, g), t_map.get_pattern(2, [Vector2i(i, g)]))
+			ref2_map.set_pattern(2, Vector2i(i, g), t_map.get_pattern(2, [Vector2i(i, g)]))
 	$ViewComponent/Camera2D2.enabled=true
+	
+	pl_ref.InitGame(id_abil)
 	
 
 func AddHideNode(new_node:Node):
@@ -37,14 +47,10 @@ func RemoveHideNode(old_node:Node):
 	old_node.queue_free()
 
 func SyncHiddenNode(id:String, new_pos:Vector2, vel:Vector2, rot:float, delta:float):
-	for i in $HidePort/HiddenOBJs.get_children():
-		if(i.name==id):
-			i.SyncFunc(new_pos, vel, delta, rot)
+	Gameplay.player_ref[id].SyncFunc(new_pos, vel, delta, rot)
 
 func SetAnim(id:String, id_anim:int):
-	for i in $HidePort/HiddenOBJs.get_children():
-		if(i.name==id):
-			i.SetAnim(id_anim)
+	Gameplay.player_ref[id].SetAnim(id_anim)
 
 func UpdatePos(pos:Vector2):
 	var sz=$HidePort.get_visible_rect().size
@@ -55,12 +61,15 @@ func UpdatePos(pos:Vector2):
 	
 	pass
 
-var pl_ref
 
-func SwitchPlayer(id:String, flg:bool):
-	pl_ref.name=id
+
+func SwitchPlayer(id:int, flg:bool):
+	pl_ref.net_id=id
+	var id_tree="player#"+str(id)
+	pl_ref.name=id_tree
 	visible=flg
 	pl_ref.disabled=!flg
+	Gameplay.player_ref["player#"+str(id)]=pl_ref
 
 const rot_const=-PI/2
 func SetLitRot(rot:float):

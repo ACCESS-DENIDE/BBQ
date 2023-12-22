@@ -198,6 +198,7 @@ func OnCancelBtnDown():
 	is_master_ui=false
 	$SaveLoad.visible=false
 	$SaverWindow.visible=false
+	$LoaderWindow.visible=false
 
 func _exit_tree():
 	my_par.get_parent().remove_child(my_par)
@@ -258,8 +259,7 @@ func OnBtnSave():
 	Saver.store_string(JSON.stringify(full_map_data, "\t"))
 	Saver.close()
 	
-	
-	
+	OnCancelBtnDown()
 
 
 func CalculateGMmatrix():
@@ -311,3 +311,53 @@ func CalculateGMmatrix():
 	
 	
 	
+
+var preloaded_levels=[]
+
+func LoadOpenerDown():
+	preloaded_levels.clear()
+	$LoaderWindow/GridContainer/AvailibLevels.clear()
+	$LoaderWindow.visible=true
+	$SaveLoad.visible=false
+	var direct:DirAccess=DirAccess.open("res://Maps")
+	
+	for i in direct.get_files():
+		if(i.split(".")[1]=="bbq"):
+			$LoaderWindow/GridContainer/AvailibLevels.add_item(i.split(".")[0])
+			preloaded_levels.push_back(i)
+	
+	
+	
+	pass # Replace with function body.
+
+
+func OnLoadBtnDown():
+	my_par.ClearTilemap()
+	var id:int=$LoaderWindow/GridContainer/AvailibLevels.get_selected_items()[0]
+	
+	var Loader=FileAccess.open("Maps/"+preloaded_levels[id], FileAccess.READ)
+	
+	var map_data=JSON.parse_string(Loader.get_as_text())
+	
+	var shift_coord:Vector2i=(str_to_var("Vector2i"+map_data["Shift"]))
+	
+	var spawner_data=map_data["SpawnerData"]
+	
+	var new_spawner_data={}
+	
+	for i in spawner_data.keys():
+		var old_x:int
+		var old_y:int
+		old_x=int(i.split(":")[0])
+		old_y=int(i.split(":")[1])
+		new_spawner_data[str(old_x-shift_coord.x)+":"+str(old_y-shift_coord.y)]=spawner_data[i]
+	
+	my_par.spawner_info=new_spawner_data
+	
+	for i in map_data["Map"].keys():
+		var string_data=map_data["Map"][i]
+		my_par.LoadTile(Vector2i(int(i.split(":")[0]), int(i.split(":")[1])), Vector3i(str_to_var("Vector3i"+map_data["Map"][i])), int(i.split(":")[2]))
+	
+	Loader.close()
+	OnCancelBtnDown()
+	pass # Replace with function body.

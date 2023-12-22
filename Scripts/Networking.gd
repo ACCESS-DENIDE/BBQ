@@ -49,6 +49,7 @@ func Leave():
 	pass
 
 func ConnectedToServer():
+	is_online=true
 	UImanager.SwitchUI("Lobby")
 	Ping(1)
 	pass
@@ -82,6 +83,27 @@ func PeerDisconnected(peer:int):
 
 
 ##### PLAYER DATA SYNCER
+
+func SyncSpeed(id:int, base:float, cur:float):
+	rpc("GetSyncSpeed", id, base, cur)
+	if(id!=1):
+		Gameplay.player_ref["player#"+str(id)].LoadSpeed(base, cur)
+
+@rpc("authority", "reliable")
+func GetSyncSpeed(id:int, base:float, cur:float):
+	Gameplay.player_ref["player#"+str(id)].LoadSpeed(base, cur)
+
+func SyncUiState(id:int, ui_id:int, val:Dictionary):
+	if(id==1):
+		UImanager.GetCurUI().UpdateInfo(ui_id, val)
+	else:
+		rpc_id(id, "GetUiSync", ui_id, val)
+	pass
+	pass
+
+@rpc("authority", "reliable")
+func GetUiSync(ui_id:int, val:Dictionary):
+	UImanager.GetCurUI().UpdateInfo(ui_id, val)
 
 func SyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float):
 	if(!is_online):
@@ -144,16 +166,16 @@ func Kick(id:int, reason:String):
 	pass
 
 
-func StartGame(map_data:String, player_in_lobby:Dictionary):
+func StartGame(map_data:Dictionary, player_in_lobby:Dictionary):
 	if(!is_online):
 		return
 	rpc("StartGameSignal",map_data, player_in_lobby)
 
 @rpc("authority", "reliable")
-func StartGameSignal(map_data:String, player_in_lobby:Dictionary):
+func StartGameSignal(map_data:Dictionary, player_in_lobby:Dictionary):
 	if(!is_online):
 		return
-	Gameplay.StartGame(map_data, player_in_lobby)
+	Gameplay.StartGameClient(map_data, player_in_lobby)
 
 
 ######LOBBY DATA TRANSMISSION
@@ -185,7 +207,7 @@ func LobbyUpdate(dat:Dictionary):
 func SendLobbyDataSync(val:String, id:int):
 	if(!is_online):
 		return
-	if(id==0 && id==1):
+	if(id==0 || id==1):
 		return
 	
 	lobby_ui_ref.UpdatePlayerData(multiplayer.get_remote_sender_id(), str(val), id)

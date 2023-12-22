@@ -59,6 +59,7 @@ material = SubResource("ShaderMaterial_rheyc")
 tile_set = ExtResource("4_e6qsf")
 format = 2
 layer_1/tile_data = PackedInt32Array()
+layer_2/tile_data = PackedInt32Array()
 
 [node name="HidePort" type="SubViewport" parent="."]
 transparent_bg = true
@@ -72,6 +73,7 @@ render_target_update_mode = 4
 tile_set = ExtResource("4_e6qsf")
 format = 2
 layer_1/tile_data = PackedInt32Array()
+layer_2/tile_data = PackedInt32Array()
 
 [node name="ViewComponent" type="Node2D" parent="."]
 

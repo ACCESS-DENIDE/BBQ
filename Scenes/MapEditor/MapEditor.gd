@@ -448,7 +448,7 @@ func _process(delta):
 		for i in range(begin_pos_curs.x-1, end_pos_curs.x+1):
 			for g in range(begin_pos_curs.y-1, end_pos_curs.y+1):
 				if(edited_map.get_cell_atlas_coords(3, Vector2i(i, g))==Vector2i(0, 0)):
-					if(edited_map.get_cell_atlas_coords(1, Vector2i(i, g))==Vector2i(2, 0) && edited_map.get_cell_source_id(1, Vector2i(i, g))==2):
+					if(edited_map.get_cell_atlas_coords(4, Vector2i(i, g))==Vector2i(2, 0) && edited_map.get_cell_source_id(4, Vector2i(i, g))==2):
 						base_map_cou-=1
 					edited_map.erase_cell(0, Vector2i(i, g))
 					edited_map.erase_cell(1, Vector2i(i, g))
@@ -482,3 +482,38 @@ func StringifyMap()->Dictionary:
 		y=0
 	
 	return outp
+
+
+func ClearTilemap():
+	for i in range(start_point_global.x-1, end_point_global.x+1):
+		for g in range(start_point_global.y-1, end_point_global.y+1):
+			edited_map.erase_cell(0, Vector2i(i, g))
+			edited_map.erase_cell(1, Vector2i(i, g))
+			edited_map.erase_cell(3, Vector2i(i, g))
+			edited_map.erase_cell(4, Vector2i(i, g))
+	
+	start_point_global=Vector2i(0,0)
+	end_point_global=Vector2i(0,0)
+	
+	base_map_cou=0
+
+
+func LoadTile(cord:Vector2i, tile:Vector3i, layer:int):
+	match layer:
+		0:
+			edited_map.set_cell(0, cord, 0, Vector2i(tile.x, tile.y), tile.z)
+			pass
+		1:
+			edited_map.set_cell(1, cord, 1, Vector2i(tile.x, tile.y), tile.z)
+			pass
+		2:
+			edited_map.set_cell(4, cord, 2, Vector2i(tile.x, tile.y), tile.z)
+			if(Vector2i(tile.x, tile.y)==Vector2i(2,0)):
+				base_map_cou+=1
+			pass
+	
+	if(end_point_global.x<cord.x):
+		end_point_global.x=cord.x
+	if(end_point_global.y<cord.y):
+		end_point_global.y=cord.y
+	

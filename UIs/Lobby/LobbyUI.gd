@@ -51,6 +51,13 @@ func _ready():
 	if(!Networking.is_authority):
 		pass
 	else:
+		GameConstants.loaded_maps.clear()
+		var direct:DirAccess=DirAccess.open("res://Maps")
+	
+		for i in direct.get_files():
+			if(i.split(".")[1]=="bbq"):
+				GameConstants.loaded_maps[i.split(".")[0]]=i
+		
 		map_id=0
 		lobby_params["GM"]=0
 		lobby_params["Map"]=GameConstants.loaded_maps.keys()[map_id]
@@ -196,6 +203,7 @@ func OnSwitchGamempde():
 
 
 func OnSwitchMapDown():
+	
 	Selector(GameConstants.loaded_maps.keys(), map_id, 1)
 
 
@@ -236,7 +244,7 @@ func CheckReady():
 		Networking.LobbyUpdate(lobby_params)
 		
 		if(am==ready_am):
-			Gameplay.StartGame("path", player_in_lobby)
+			Gameplay.StartGameServer(GameConstants.loaded_maps[GameConstants.loaded_maps.keys()[map_id]], player_in_lobby)
 
 func OnSetNameDown():
 	display_name=$Grid/SubGrid/Text_name.text

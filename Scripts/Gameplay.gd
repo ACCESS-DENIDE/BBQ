@@ -6,6 +6,8 @@ var pupppet_prel=preload("res://Assets/PlayerPuppet/PlayerPuppet.tscn")
 var my_node_name:String=""
 var map_size:Vector2i=Vector2i(0,0)
 
+var is_started:bool=false
+
 var player_ref={}
 
 var player_spawners=[]
@@ -39,7 +41,7 @@ func StartGameClient(map_data:Dictionary, player_in_lobby:Dictionary):
 		AddPuppet(i, -1)
 
 func StartGameServer(map_path:String, player_in_lobby:Dictionary):
-	
+	is_started=true
 	active_items=0
 	active_props=0
 	b_base_ref=null

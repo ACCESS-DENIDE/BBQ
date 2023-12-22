@@ -64,12 +64,21 @@ func UpdatePos(pos:Vector2):
 
 
 func SwitchPlayer(id:int, flg:bool):
-	pl_ref.net_id=id
 	var id_tree="player#"+str(id)
-	pl_ref.name=id_tree
-	visible=flg
-	pl_ref.disabled=!flg
-	Gameplay.player_ref["player#"+str(id)]=pl_ref
+	if (multiplayer.get_unique_id()==id):
+		pl_ref.net_id=id
+		pl_ref.net_id=id
+		pl_ref.net_id=id
+		pl_ref.name=id_tree
+		visible=flg
+		pl_ref.disabled=!flg
+		Gameplay.player_ref["player#"+str(id)]=pl_ref
+	else:
+		if(Gameplay.player_ref.has(id_tree)):
+			var ref=Gameplay.player_ref[id_tree]
+			ref.get_parent().remove_child(ref)
+			ref.queue_free()
+			Gameplay.player_ref.erase(id_tree)
 
 const rot_const=-PI/2
 func SetLitRot(rot:float):

@@ -86,8 +86,7 @@ func PeerDisconnected(peer:int):
 
 func SyncSpeed(id:int, base:float, cur:float):
 	rpc("GetSyncSpeed", id, base, cur)
-	if(id!=1):
-		Gameplay.player_ref["player#"+str(id)].LoadSpeed(base, cur)
+
 
 @rpc("authority", "reliable")
 func GetSyncSpeed(id:int, base:float, cur:float):

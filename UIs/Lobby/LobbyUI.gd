@@ -51,24 +51,24 @@ func _ready():
 	if(!Networking.is_authority):
 		pass
 	else:
-		GameConstants.loaded_maps.clear()
+		GameGlobalVar.loaded_maps.clear()
 		var direct:DirAccess=DirAccess.open("res://Maps")
 	
 		for i in direct.get_files():
 			if(i.split(".")[1]=="bbq"):
-				GameConstants.loaded_maps[i.split(".")[0]]=i
+				GameGlobalVar.loaded_maps[i.split(".")[0]]=i
 		
 		map_id=0
 		lobby_params["GM"]=0
-		lobby_params["Map"]=GameConstants.loaded_maps.keys()[map_id]
+		lobby_params["Map"]=GameGlobalVar.loaded_maps.keys()[map_id]
 		lobby_params["Ready"]="0/0"
-		gamemode_display.text=GameConstants.gamemodes[lobby_params["GM"]]
+		gamemode_display.text=GameGlobalVar.gamemodes[lobby_params["GM"]]
 		map_display.text=lobby_params["Map"]
 	
 	
 	
-	team_display.text=GameConstants.teams[player_in_lobby[net_id]["team"]]
-	ability_display.text=GameConstants.powers[player_in_lobby[net_id]["power"]]
+	team_display.text=GameGlobalVar.teams[player_in_lobby[net_id]["team"]]
+	ability_display.text=GameGlobalVar.powers[player_in_lobby[net_id]["power"]]
 	display_name=player_in_lobby[net_id]["display_name"]
 	DisplayReady()
 	$Grid/SubGrid/Text_name.text=display_name
@@ -94,7 +94,7 @@ func UpdatePlayerList(arr:Array):
 
 func DisplayData(dat:Dictionary):
 	
-	gamemode_display.text=GameConstants.gamemodes[dat["GM"]]
+	gamemode_display.text=GameGlobalVar.gamemodes[dat["GM"]]
 	map_display.text=dat["Map"]
 	ready_amount.text=dat["Ready"]
 	
@@ -175,22 +175,22 @@ func OnSelectDown():
 func SetNewVal( new_val:int, id:int):
 	match id:
 		0:
-			gamemode_display.text=GameConstants.gamemodes[new_val]
+			gamemode_display.text=GameGlobalVar.gamemodes[new_val]
 			lobby_params["GM"]=new_val
 			
 			pass
 		1:
-			map_display.text=GameConstants.loaded_maps.keys()[new_val]
-			lobby_params["Map"]=GameConstants.loaded_maps.keys()[new_val]
+			map_display.text=GameGlobalVar.loaded_maps.keys()[new_val]
+			lobby_params["Map"]=GameGlobalVar.loaded_maps.keys()[new_val]
 			map_id=new_val
 			pass
 		2:
-			team_display.text=GameConstants.teams[new_val]
+			team_display.text=GameGlobalVar.teams[new_val]
 			player_in_lobby[net_id]["team"]=new_val
 			Networking.LobbyDataSync(str(new_val), 2)
 			pass
 		3:
-			ability_display.text=GameConstants.powers[new_val]
+			ability_display.text=GameGlobalVar.powers[new_val]
 			player_in_lobby[net_id]["power"]=new_val
 			Networking.LobbyDataSync(str(new_val), 3)
 			pass
@@ -199,20 +199,20 @@ func SetNewVal( new_val:int, id:int):
 
 
 func OnSwitchGamempde():
-	Selector(GameConstants.gamemodes, lobby_params["GM"], 0)
+	Selector(GameGlobalVar.gamemodes, lobby_params["GM"], 0)
 
 
 func OnSwitchMapDown():
 	
-	Selector(GameConstants.loaded_maps.keys(), map_id, 1)
+	Selector(GameGlobalVar.loaded_maps.keys(), map_id, 1)
 
 
 func OnSwitchTeamDown():
-	Selector(GameConstants.teams, player_in_lobby[net_id]["team"], 2)
+	Selector(GameGlobalVar.teams, player_in_lobby[net_id]["team"], 2)
 
 
 func OnSwitchAbilityDown():
-	Selector(GameConstants.powers, player_in_lobby[net_id]["power"], 3)
+	Selector(GameGlobalVar.powers, player_in_lobby[net_id]["power"], 3)
 
 
 func OnReadySwitchDown():
@@ -244,7 +244,7 @@ func CheckReady():
 		Networking.LobbyUpdate(lobby_params)
 		
 		if(am==ready_am):
-			Gameplay.StartGameServer(GameConstants.loaded_maps[GameConstants.loaded_maps.keys()[map_id]], player_in_lobby)
+			Gameplay.StartGameServer(GameGlobalVar.loaded_maps[GameGlobalVar.loaded_maps.keys()[map_id]], player_in_lobby)
 
 func OnSetNameDown():
 	display_name=$Grid/SubGrid/Text_name.text

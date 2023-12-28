@@ -2,6 +2,7 @@ extends Node
 
 var is_authority:bool
 var is_online:bool
+var is_data_loaded:bool
 
 var lobby_ui_ref
 
@@ -42,6 +43,7 @@ func Host(port:int):
 		OS.alert("Failed to start multiplayer server.")
 		return
 	multiplayer.multiplayer_peer = peer
+	is_data_loaded=true
 
 func Leave():
 	is_online=false
@@ -52,6 +54,7 @@ func ConnectedToServer():
 	is_online=true
 	UImanager.SwitchUI("Lobby")
 	Ping(1)
+	PlayerData.pings[1]=0
 	pass
 
 func ServerDisconnected():
@@ -63,19 +66,28 @@ func ServerDisconnected():
 
 func NewPeerConnected(peer:int):
 	if(is_authority):
-		lobby_ui_ref.AddPlayer(peer)
+		if(lobby_ui_ref!=null):
+			lobby_ui_ref.AddPlayer(peer)
 		PlayerData.RegisterStamp(peer, Time.get_ticks_msec())
 		PlayerData.pings[peer]=0
 		Ping(peer)
+		PlayerData.pings[peer]=0
+		if(Gameplay.is_started):
+			SignalForcePlayerSpawn(peer, 0)
+			RequestLocalValue(peer)
+			
 	pass
 
 func PeerDisconnected(peer:int):
 	if(is_authority):
 		if(lobby_ui_ref!=null):
 			lobby_ui_ref.RemovePlayer(peer)
+		if(Gameplay.is_started):
+			GamemodeProcessor.RemovePlayer("player#"+str(peer))
+			Gameplay.RemovePuppet(peer)
 		PlayerData.RemoveStampData(peer)
 		PlayerData.pings.erase(peer)
-		Gameplay.RemovePlayer(peer)
+		CallRemovePuppet(peer)
 	pass
 
 
@@ -83,6 +95,70 @@ func PeerDisconnected(peer:int):
 
 
 ##### PLAYER DATA SYNCER
+
+func CallRemovePuppet(id:int):
+	
+	rpc("RemovePuppet", id)
+
+@rpc("authority", "reliable")
+func RemovePuppet(id:int):
+	Gameplay.RemovePuppet(id, )
+	
+
+func SignalForcePlayerSpawn(id:int, team:int):
+	rpc("ForcePlayerSpawn", id, team)
+
+@rpc("authority", "reliable")
+func ForcePlayerSpawn(id:int, team:int):
+	if(id==multiplayer.get_unique_id()):
+		return
+	
+	Gameplay.AddPuppet(id, -1,team)
+	
+
+func DashPlayer(flg:bool):
+	if(is_authority):
+		var ref=Gameplay.player_ref["player#"+str(1)]
+		ref.DashSwitch(flg)
+		SyncSpeed(1, ref.base_speed, ref.speed)
+	else:
+		rpc_id(1, "SetDashPlayer", flg)
+
+@rpc("any_peer", "reliable")
+func SetDashPlayer(flg:bool):
+	var ref=Gameplay.player_ref["player#"+str(multiplayer.get_remote_sender_id())]
+	ref.DashSwitch(flg)
+	SyncSpeed(multiplayer.get_remote_sender_id(), ref.base_speed, ref.speed)
+
+func RequestLocalValue(id_sourse:int):
+	rpc_id(id_sourse, "CallRequestLocalValue", Gameplay.map_store["Map"], Gameplay.player_inf)
+	for i in Gameplay.player_ref.values():
+		rpc_id(id_sourse, "GetSyncSpeed", i.net_id, i.base_speed, i.speed)
+
+@rpc("authority", "reliable")
+func CallRequestLocalValue(map_tiles:Dictionary, players:Dictionary):
+	var net_id=multiplayer.get_unique_id()
+	rpc_id(1, "GetRequestLocalValue", GameLocalVar.default_abil, GameLocalVar.default_name)
+	players[net_id]={}
+	players[net_id]["display_name"]=GameLocalVar.default_name
+	players[net_id]["team"]=0
+	players[net_id]["power"]=GameLocalVar.default_abil
+	players[net_id]["ready"]=1
+	StartGameSignal(map_tiles, players)
+
+
+@rpc("any_peer", "reliable")
+func GetRequestLocalValue(id_abil:int, def_name:String):
+	var net_id=multiplayer.get_remote_sender_id()
+	Gameplay.player_inf[net_id]={}
+	Gameplay.player_inf[net_id]["display_name"]=def_name
+	Gameplay.player_inf[net_id]["team"]=0
+	Gameplay.player_inf[net_id]["power"]=id_abil
+	Gameplay.player_inf[net_id]["ready"]=1
+	GamemodeProcessor.AddPlayer(net_id, id_abil)
+	SwitchPlayerTeam(net_id, Gameplay.player_inf[net_id]["team"])
+
+
 
 func SyncSpeed(id:int, base:float, cur:float):
 	rpc("GetSyncSpeed", id, base, cur)
@@ -104,13 +180,21 @@ func SyncUiState(id:int, ui_id:int, val:Dictionary):
 func GetUiSync(ui_id:int, val:Dictionary):
 	UImanager.GetCurUI().UpdateInfo(ui_id, val)
 
-func SyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float):
+func SwitchPlayerTeam(id:int, team_id:int):
+	rpc("SwitchTeamSignal", id, team_id)
+
+@rpc("authority", "reliable")
+func SwitchTeamSignal(id:int, team_id:int):
+	Gameplay.SwitchTeam("player#"+str(id), team_id)
+
+
+func SyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float, syncid:int):
 	if(!is_online):
 		return
 	if(is_authority):
 		rpc("SetSyncPosPlayer", id, pos, vel, rot)
 	else:
-		rpc_id(1, "CallSyncPosPlayer", id, pos, vel, rot)
+		rpc_id(1, "CallSyncPosPlayer", id, pos, vel, rot, syncid)
 
 
 func SwitchPlayerAnim(id:String, id_anim:int):
@@ -141,13 +225,13 @@ func SetAnim(id:String, id_anim:int):
 
 
 @rpc("any_peer", "unreliable")
-func CallSyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float):
+func CallSyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float, syncid:int):
 	if(!is_online):
 		return
 	var delta=PlayerData.GetPlayerDeltatime(multiplayer.get_remote_sender_id(), Time.get_ticks_msec())
 	if(delta==0):
 		return
-	Gameplay.SyncPuppet(id, pos, vel, rot, delta)
+	Gameplay.SyncPuppet(id, pos, vel, rot, delta, syncid)
 	rpc("SetSyncPosPlayer", id, pos, vel, rot)
 	
 	pass
@@ -156,12 +240,13 @@ func CallSyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float):
 func SetSyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float):
 	if(!is_online):
 		return
-	Gameplay.SyncPuppet(id, pos, vel, rot, 0)
+	Gameplay.SyncPuppet(id, pos, vel, rot, 0, -1)
 
 ### SERVER PROCESSING
 
 
 func Kick(id:int, reason:String):
+	print("Player id <"+str(id)+"> was kicked, reason:" +reason)
 	pass
 
 
@@ -175,6 +260,7 @@ func StartGameSignal(map_data:Dictionary, player_in_lobby:Dictionary):
 	if(!is_online):
 		return
 	Gameplay.StartGameClient(map_data, player_in_lobby)
+	is_data_loaded=true
 
 
 ######LOBBY DATA TRANSMISSION

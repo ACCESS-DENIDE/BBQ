@@ -15,8 +15,17 @@ script = ExtResource("1_attv0")
 z_index = 1
 texture_filter = 1
 sprite_frames = ExtResource("1_bbt0i")
-animation = &"run"
+animation = &"idle"
 
 [node name="PuppetCol" type="CollisionShape2D" parent="."]
 rotation = 1.5708
 shape = ExtResource("2_syqsg")
+
+[node name="DashDuration" type="Timer" parent="."]
+
+[node name="DashCD" type="Timer" parent="."]
+
+[node name="RespawnTimer" type="Timer" parent="."]
+
+[connection signal="timeout" from="DashDuration" to="." method="DashCooldownTime"]
+[connection signal="timeout" from="DashCD" to="." method="DashDurationTime"]

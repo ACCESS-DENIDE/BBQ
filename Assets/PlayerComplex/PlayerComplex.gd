@@ -14,7 +14,7 @@ func _process(delta):
 	$LitView/Liter/TileMap.visible=false
 	$LitView/Liter/TileMap.visible=true
 
-func Preload(id_abil:int):
+func Preload(id_abil:int, team:int):
 	var ref_map=$LitView/Liter/TileMap
 	var ref2_map=$HidePort/HiddenOBJs/TileMap2
 	var point_light_2d = $LitView/Liter/PointLight2D
@@ -36,7 +36,7 @@ func Preload(id_abil:int):
 			ref2_map.set_pattern(2, Vector2i(i, g), t_map.get_pattern(2, [Vector2i(i, g)]))
 	$ViewComponent/Camera2D2.enabled=true
 	
-	pl_ref.InitGame(id_abil)
+	pl_ref.InitGame(id_abil, team)
 	
 
 func AddHideNode(new_node:Node):
@@ -46,11 +46,6 @@ func RemoveHideNode(old_node:Node):
 	$HidePort/HiddenOBJs.remove_child(old_node)
 	old_node.queue_free()
 
-func SyncHiddenNode(id:String, new_pos:Vector2, vel:Vector2, rot:float, delta:float):
-	Gameplay.player_ref[id].SyncFunc(new_pos, vel, delta, rot)
-
-func SetAnim(id:String, id_anim:int):
-	Gameplay.player_ref[id].SetAnim(id_anim)
 
 func UpdatePos(pos:Vector2):
 	var sz=$HidePort.get_visible_rect().size
@@ -73,12 +68,6 @@ func SwitchPlayer(id:int, flg:bool):
 		visible=flg
 		pl_ref.disabled=!flg
 		Gameplay.player_ref["player#"+str(id)]=pl_ref
-	else:
-		if(Gameplay.player_ref.has(id_tree)):
-			var ref=Gameplay.player_ref[id_tree]
-			ref.get_parent().remove_child(ref)
-			ref.queue_free()
-			Gameplay.player_ref.erase(id_tree)
 
 const rot_const=-PI/2
 func SetLitRot(rot:float):

@@ -24,29 +24,35 @@ var gameplay_spawners=[]
 var prop_spawners=[]
 var active_props=0
 
+var player_inf:Dictionary
+
+var map_store:Dictionary
+
 func StartGameClient(map_data:Dictionary, player_in_lobby:Dictionary):
-	
+	var my_net_id=multiplayer.get_unique_id()
 	DrawMapTiles(map_data)
 	
 	Networking.lobby_ui_ref=null
 	UImanager.SwitchUI("InGame")
 	$Map.visible=true
 	AddPlayer(multiplayer.get_unique_id())
-	$PlayerComplex.Preload(player_in_lobby[1]["power"])
+	$PlayerComplex.Preload(player_in_lobby[multiplayer.get_unique_id()]["power"], player_in_lobby[my_net_id]["team"])
 	
 	
 	
-	player_in_lobby.erase(multiplayer.get_unique_id())
 	for i in player_in_lobby.keys():
-		AddPuppet(i, -1)
+		if(i!=my_net_id):
+			AddPuppet(i, -1, player_in_lobby[i]["team"])
 
 func StartGameServer(map_path:String, player_in_lobby:Dictionary):
 	is_started=true
 	active_items=0
 	active_props=0
 	b_base_ref=null
+	player_inf=player_in_lobby
 	var r_base_ref=null
 	if(Networking.is_authority):
+		GamemodeProcessor.AssignTeams(player_in_lobby)
 		var Loader=FileAccess.open("Maps/"+map_path, FileAccess.READ)
 		var map_data=JSON.parse_string(Loader.get_as_text())
 		
@@ -64,7 +70,7 @@ func StartGameServer(map_path:String, player_in_lobby:Dictionary):
 			new_spawner_data[str(old_x-shift_coord.x)+":"+str(old_y-shift_coord.y)]=spawner_data[i]
 	
 		
-		
+		map_store=map_data
 		
 		Networking.StartGame(map_data["Map"], player_in_lobby)
 		DrawMapTiles(map_data["Map"])
@@ -78,13 +84,11 @@ func StartGameServer(map_path:String, player_in_lobby:Dictionary):
 	UImanager.SwitchUI("InGame")
 	$Map.visible=true
 	AddPlayer(multiplayer.get_unique_id())
-	$PlayerComplex.Preload(player_in_lobby[1]["power"])
+	$PlayerComplex.Preload(player_in_lobby[1]["power"], player_in_lobby[1]["team"])
 	
-	
-	
-	player_in_lobby.erase(multiplayer.get_unique_id())
 	for i in player_in_lobby.keys():
-		AddPuppet(i, player_in_lobby[i]["power"])
+		if(i!=1):
+			AddPuppet(i, player_in_lobby[i]["power"], player_in_lobby[i]["team"])
 
 
 func DrawMapTiles(tile_data:Dictionary):
@@ -122,6 +126,7 @@ func DrawMapTiles(tile_data:Dictionary):
 	pass
 
 func AddPlayer(id:int):
+	player_ref["player#"+str(id)]=$PlayerComplex.pl_ref
 	$PlayerComplex.SwitchPlayer(id, true)
 	pass
 
@@ -129,18 +134,27 @@ func RemovePlayer(id:int):
 	$PlayerComplex.SwitchPlayer(id, false)
 	pass
 
-func AddPuppet(id:int, id_abil:int):
+func AddPuppet(id:int, id_abil:int, team:int):
 	var new_puppet=pupppet_prel.instantiate()
 	new_puppet.name="player#"+str(id)
 	new_puppet.net_id=id
 	$PlayerComplex.AddHideNode(new_puppet)
-	new_puppet.InitGame(id_abil)
+	new_puppet.InitGame(id_abil, team)
 	player_ref["player#"+str(id)]=new_puppet
 	pass
 
-func SyncPuppet(id:String, new_pos:Vector2, vel:Vector2, rot:float, delta:float):
-	$PlayerComplex.SyncHiddenNode(id, new_pos, vel, rot, delta)
+func RemovePuppet(id:int):
+	var id_tree="player#"+str(id)
+	if(player_ref.has(id_tree)):
+		var ref=player_ref[id_tree]
+		ref.get_parent().remove_child(ref)
+		ref.queue_free()
+		player_ref.erase(id_tree)
 
+func SyncPuppet(id:String, new_pos:Vector2, vel:Vector2, rot:float, delta:float, syncid:int):
+	if(!((Networking.is_data_loaded) && (is_started))):
+		return
+	player_ref[id].SyncFunc(new_pos, vel, delta, rot, syncid)
 
 func OnPingTime():
 	Networking.MassPing()
@@ -148,9 +162,16 @@ func OnPingTime():
 
 
 func SetAnim(id:String, id_anim:int):
-	$PlayerComplex.SetAnim(id, id_anim)
+	if(!((Networking.is_data_loaded) && (is_started))):
+		return
+	player_ref[id].SetAnim(id_anim)
 	pass
 
+func SwitchTeam(id:String, id_team:int):
+	if(!(Networking.is_data_loaded)):
+		return
+	player_ref[id].SwitchTeam(id_team)
+	pass
 
 func ClearAll():
 	$Map.visible=false

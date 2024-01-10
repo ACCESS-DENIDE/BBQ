@@ -29,6 +29,7 @@ var player_inf:Dictionary
 var map_store:Dictionary
 
 func StartGameClient(map_data:Dictionary, player_in_lobby:Dictionary):
+	is_started=true
 	var my_net_id=multiplayer.get_unique_id()
 	DrawMapTiles(map_data)
 	
@@ -151,10 +152,10 @@ func RemovePuppet(id:int):
 		ref.queue_free()
 		player_ref.erase(id_tree)
 
-func SyncPuppet(id:String, new_pos:Vector2, vel:Vector2, rot:float, delta:float, syncid:int):
+func SyncPuppet(id:String, new_pos:Vector2, vel:Vector2, rot:float, delta:float):
 	if(!((Networking.is_data_loaded) && (is_started))):
 		return
-	player_ref[id].SyncFunc(new_pos, vel, delta, rot, syncid)
+	player_ref[id].SyncFunc(new_pos, vel, delta, rot)
 
 func OnPingTime():
 	Networking.MassPing()
@@ -183,3 +184,7 @@ func EnableUI(ref:Node):
 		for i in get_children():
 			if(i.name==my_node_name):
 				i.SetUI(ref)
+
+
+func GetPlayer()->Node:
+	return $PlayerComplex.pl_ref

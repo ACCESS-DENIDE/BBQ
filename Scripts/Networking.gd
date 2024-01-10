@@ -68,7 +68,7 @@ func NewPeerConnected(peer:int):
 	if(is_authority):
 		if(lobby_ui_ref!=null):
 			lobby_ui_ref.AddPlayer(peer)
-		PlayerData.RegisterStamp(peer, Time.get_ticks_msec())
+		PlayerData.RegisterStamp(peer)
 		PlayerData.pings[peer]=0
 		Ping(peer)
 		PlayerData.pings[peer]=0
@@ -122,6 +122,8 @@ func DashPlayer(flg:bool):
 		ref.DashSwitch(flg)
 		SyncSpeed(1, ref.base_speed, ref.speed)
 	else:
+		var ref=Gameplay.player_ref["player#"+str(multiplayer.get_unique_id())]
+		ref.DashSwitch(flg)
 		rpc_id(1, "SetDashPlayer", flg)
 
 @rpc("any_peer", "reliable")
@@ -161,7 +163,8 @@ func GetRequestLocalValue(id_abil:int, def_name:String):
 
 
 func SyncSpeed(id:int, base:float, cur:float):
-	rpc("GetSyncSpeed", id, base, cur)
+	if(is_authority):
+		rpc("GetSyncSpeed", id, base, cur)
 
 
 @rpc("authority", "reliable")
@@ -188,13 +191,13 @@ func SwitchTeamSignal(id:int, team_id:int):
 	Gameplay.SwitchTeam("player#"+str(id), team_id)
 
 
-func SyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float, syncid:int):
+func SyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float):
 	if(!is_online):
 		return
 	if(is_authority):
 		rpc("SetSyncPosPlayer", id, pos, vel, rot)
 	else:
-		rpc_id(1, "CallSyncPosPlayer", id, pos, vel, rot, syncid)
+		rpc_id(1, "CallSyncPosPlayer", id, pos, vel, rot)
 
 
 func SwitchPlayerAnim(id:String, id_anim:int):
@@ -224,14 +227,14 @@ func SetAnim(id:String, id_anim:int):
 	pass
 
 
-@rpc("any_peer", "unreliable")
-func CallSyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float, syncid:int):
+@rpc("any_peer", "unreliable_ordered")
+func CallSyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float):
 	if(!is_online):
 		return
-	var delta=PlayerData.GetPlayerDeltatime(multiplayer.get_remote_sender_id(), Time.get_ticks_msec())
+	var delta=PlayerData.GetPlayerDeltatime(multiplayer.get_remote_sender_id())
 	if(delta==0):
 		return
-	Gameplay.SyncPuppet(id, pos, vel, rot, delta, syncid)
+	Gameplay.SyncPuppet(id, pos, vel, rot, delta)
 	rpc("SetSyncPosPlayer", id, pos, vel, rot)
 	
 	pass
@@ -240,7 +243,7 @@ func CallSyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float, syncid:in
 func SetSyncPosPlayer(id:String, pos:Vector2, vel:Vector2, rot:float):
 	if(!is_online):
 		return
-	Gameplay.SyncPuppet(id, pos, vel, rot, 0, -1)
+	Gameplay.SyncPuppet(id, pos, vel, rot, 0)
 
 ### SERVER PROCESSING
 

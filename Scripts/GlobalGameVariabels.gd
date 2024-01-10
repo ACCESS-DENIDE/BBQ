@@ -6,7 +6,7 @@ var gamemodes=["Capture the flag", "Boss fight", "Death match", "Team DM", "Cont
 var powers=["Teleport", "Revive", "Mine", "Century", "Shield", "Invincibility"]
 var teams=["Random", "Blue", "Red"]
 
-var player_base_speed=300
+var player_base_speed=19000
 var player_base_hp=100
 var player_base_shield=50
 

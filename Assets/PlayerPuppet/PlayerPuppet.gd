@@ -37,12 +37,18 @@ func DashSwitch(flg:bool):
 			is_dashed=true
 			is_dash_cd=false
 			speed=speed*GameGlobalVar.dash_multplyer
-			$DashDuration.start(GameGlobalVar.dash_duration*items[1])
+			$DashDuration.start(GameGlobalVar.dash_duration*(items[1]+1))
+			if(Networking.is_authority):
+				Networking.SyncSpeed(net_id, base_speed, speed)
 	else:
-		is_dashed=false
-		speed=base_speed*float(1+float(items[0]*0.3))
-		$DashDuration.stop()
-		$DashCD.start(GameGlobalVar.dash_cd)
+		if(is_dashed):
+			is_dashed=false
+			speed=base_speed*float(1+float(items[0]*0.3))
+			$DashDuration.stop()
+			$DashCD.start(GameGlobalVar.dash_cd)
+			print("DashCD")
+			if(Networking.is_authority):
+				Networking.SyncSpeed(net_id, base_speed, speed)
 
 
 func SwitchTeam(new_team:int):
@@ -125,58 +131,26 @@ func InitGame(id_abil:int, team:int):
 		Networking.SyncSpeed(net_id, base_speed, speed)
 
 
-var last_legit_pos:Vector2
-var prev_skipped:bool=false
 var stored_delta:int=0
-var stored_delta_am:int=0
+var stored_way:int=0
 
-func SyncFunc(new_pos:Vector2, vel:Vector2, delta:float, rot:float, syncid:int):
+
+var packet_count:int=0
+
+func SyncFunc(new_pos:Vector2, vel:Vector2, delta:float, rot:float):
 	if(!is_speed_loaded):
 		return
 	if(Networking.is_authority):
-		var way:float=Vector2(new_pos.x-last_legit_pos.x, new_pos.y-last_legit_pos.y).length()
-		print("Delta: "+str(delta)+" Stored delta: "+str(stored_delta))
-		if(float(delta+stored_delta)/(stored_delta_am+1)<17):
-			print("Less 17")
-			if(prev_skipped):
-				print("Added")
-				stored_delta+=delta
-				stored_delta_am+=1
-			else:
-				print("Stored")
-				prev_skipped=true
-				stored_delta=delta
-				stored_delta_am=1
-			predict_vel=vel
-			rotation=rot
-			position=new_pos+(predict_vel*base_speed*(PlayerData.pings[net_id]/1000))
-		else:
-			print("More 17")
-			var len:float=Vector2(new_pos.x-last_legit_pos.x, new_pos.y-last_legit_pos.y).length()
-			print("Old pos: "+str(last_legit_pos))
-			print("New pos: "+str(new_pos))
-			print("Len: "+str(len))
-			print(len/((delta+stored_delta)/1000))
-			if(len/((delta+stored_delta)/1000)>speed):
-				Networking.Kick(net_id, "Sync Error, last record speed: "+ str(len/((delta+stored_delta)/1000)))
-				last_legit_pos=new_pos
-				predict_vel=vel
-				rotation=rot
-				position=new_pos+(predict_vel*base_speed*(PlayerData.pings[net_id]/1000))
-			else:
-				print("NO KICK")
-				last_legit_pos=new_pos
-				predict_vel=vel
-				rotation=rot
-				position=new_pos+(predict_vel*base_speed*(PlayerData.pings[net_id]/1000))
-			prev_skipped=false
-			stored_delta=0
-			stored_delta_am=0
-		
-		
+		#TODO:insert anticheat here
+		predict_vel=vel
+		rotation=rot
+		$StabelNode.rotation=-rotation
+		position=new_pos+(predict_vel*base_speed*(PlayerData.pings[net_id]/1000))
+		pass
 	else:
 		predict_vel=vel
 		rotation=rot
+		$StabelNode.rotation=-rotation
 		position=new_pos+(predict_vel*base_speed*(PlayerData.pings[1]/1000))
 
 func LoadSpeed(base_sn:float, cur_sn:float):
@@ -190,14 +164,17 @@ func _physics_process(_delta):
 	predict_vel=predict_vel.normalized()
 	
 	if (predict_vel.x!=0):
-		velocity.x = predict_vel.x * base_speed
+		velocity.x = predict_vel.x
 	else:
 		velocity.x = move_toward(velocity.x, 0, base_speed)
 	if (predict_vel.y!=0):
-		velocity.y = predict_vel.y * base_speed
+		velocity.y = predict_vel.y
 	else:
 		velocity.y = move_toward(velocity.y, 0, base_speed)
 	move_and_slide()
+	
+	
+	$StabelNode/Label.text=str(position)
 
 
 func SetAnim(id:int):
@@ -206,10 +183,9 @@ func SetAnim(id:int):
 			puppet_anim.play("idle")
 			pass
 		1:
-			if(is_dashed):
-				puppet_anim.play("run")
-			else:
-				puppet_anim.play("walk")
+			puppet_anim.play("walk")
+		2:
+			puppet_anim.play("run")
 			pass
 
 

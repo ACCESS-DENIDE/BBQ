@@ -43,6 +43,7 @@ func UpdateInfo(ui_id:int, val:Dictionary):
 			$Ability/AbilityRechargeProgress.value=val["State"]
 			pass
 		4:
+			Gameplay.GetPlayer().items=val["Amount"]
 			pass
 		
 	pass

@@ -42,16 +42,22 @@ func DashSwitch(flg:bool):
 	if(flg):
 		if(is_dash_cd):
 			is_dashed=true
+			#print("Is dashed True")
 			is_dash_cd=false
 			speed=speed*GameGlobalVar.dash_multplyer
-			$DashDuration.start(GameGlobalVar.dash_duration*items[1])
+			
+			$DashDuration.start(GameGlobalVar.dash_duration*(items[1]+1))
+			if(Networking.is_authority):
+				Networking.SyncSpeed(net_id, base_speed, speed)
 	else:
 		if(is_dashed):
 			is_dashed=false
+			#print("Is dashed False")
 			speed=base_speed*float(1+float(items[0]*0.3))
 			$DashDuration.stop()
 			$DashCD.start(GameGlobalVar.dash_cd)
-			Networking.SyncSpeed(net_id, base_speed, speed)
+			if(Networking.is_authority):
+				Networking.SyncSpeed(net_id, base_speed, speed)
 
 func LoadSpeed(base_sn:float, cur_sn:float):
 	speed=cur_sn
@@ -145,7 +151,7 @@ func InitGame(id_abil:int, team:int):
 		Networking.SyncSpeed(net_id, base_speed, speed)
 		
 
-func SyncFunc(new_pos:Vector2, vel:Vector2, delta:float, rot:float, syncid:int):
+func SyncFunc(new_pos:Vector2, vel:Vector2, delta:float, rot:float):
 	pass
 
 
@@ -168,17 +174,18 @@ func _process(delta):
 		player_anim.play("idle")
 		
 	else:
-		Networking.SwitchPlayerAnim("player#"+str(net_id), 1)
+		print(str(is_dashed)+" "+str(net_id))
 		if(is_dashed):
 			player_anim.play("run")
+			Networking.SwitchPlayerAnim("player#"+str(net_id), 2)
 		else:
 			player_anim.play("walk")
+			Networking.SwitchPlayerAnim("player#"+str(net_id), 1)
 	
+
+var packet_count:int=0
+
 func _physics_process(_delta):
-	
-	
-	
-	
 	if(disabled):
 		return
 	
@@ -205,26 +212,24 @@ func _physics_process(_delta):
 	direction=direction.normalized()
 	
 	if (direction.x!=0):
-		velocity.x = direction.x * speed
+		velocity.x = direction.x * speed*_delta
 	else:
 		velocity.x = move_toward(velocity.x, 0, speed)
 	if (direction.y!=0):
-		velocity.y = direction.y * speed
+		velocity.y = direction.y * speed*_delta
 	else:
 		velocity.y = move_toward(velocity.y, 0, speed)
 	
-	var last_pos=position
-	var randgen=RandomNumberGenerator.new()
-	var syncid=randgen.randi_range(1, 10000000)
 	move_and_slide()
 	
-	var dlt:float=Vector2(position.x-last_pos.x, position.y-last_pos.y).length()
+	
+	$StabelNode/Label.text=str(position)
+	
 	
 	my_complex.UpdatePos(position)
-	
-	
-	Networking.SyncPosPlayer(name, position, direction, rotation, syncid)
+	Networking.SyncPosPlayer(name, position, velocity, rotation)
 	my_complex.SetLitRot(rotation)
+	$StabelNode.rotation=-rotation
 	
 
 var UI

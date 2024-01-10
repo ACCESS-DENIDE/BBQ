@@ -22,10 +22,24 @@ rotation = 1.5708
 shape = ExtResource("2_syqsg")
 
 [node name="DashDuration" type="Timer" parent="."]
+one_shot = true
 
 [node name="DashCD" type="Timer" parent="."]
+one_shot = true
 
 [node name="RespawnTimer" type="Timer" parent="."]
+one_shot = true
 
-[connection signal="timeout" from="DashDuration" to="." method="DashCooldownTime"]
-[connection signal="timeout" from="DashCD" to="." method="DashDurationTime"]
+[node name="StabelNode" type="Node2D" parent="."]
+
+[node name="Label" type="Label" parent="StabelNode"]
+offset_left = -20.0303
+offset_top = 10.9447
+offset_right = 19.9697
+offset_bottom = 33.9447
+text = "fdgfdgd"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="timeout" from="DashDuration" to="." method="DashDurationTime"]
+[connection signal="timeout" from="DashCD" to="." method="DashCooldownTime"]

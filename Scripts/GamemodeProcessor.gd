@@ -13,6 +13,7 @@ var respawn:Callable
 var ags:Callable
 var remove:Callable
 var addplayer:Callable
+var getally:Callable
 
 
 func PlayerDeath(id:String):
@@ -22,6 +23,19 @@ func AditionalGemplaySignal(data:String):
 	pass
 
 func PlayerRespawn(id:String):
+	pass
+
+func GetAlly(ref:Node)->Array:
+	var ret=[]
+	match ref.my_team:
+		1:
+			ret=b_team
+			pass
+		2:
+			ret=r_team
+			pass
+	
+	return ret
 	pass
 
 func RemovePlayer(id:String):
@@ -43,12 +57,10 @@ func AddPlayer(id:int, id_abil:int):
 		Gameplay.player_inf[id]["team"]=2
 		Gameplay.AddPuppet(id, id_abil, 2)
 		red+=1
-		print("2")
 	else:
 		Gameplay.player_inf[id]["team"]=1
 		Gameplay.AddPuppet(id, id_abil, 1)
 		blue+=1
-		print("1")
 
 func AssignTeams(inp:Dictionary):
 	for i in inp.values():

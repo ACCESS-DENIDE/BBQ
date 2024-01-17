@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="Ability" load_steps=3 format=3 uid="uid://dmnl5hcnme8bh"]
+
+[ext_resource type="Script" path="res://Resourses/Abilities/AbilityBase.gd" id="1_ui3do"]
+[ext_resource type="Script" path="res://Resourses/Abilities/Invincibility/InvincibleScript.gd" id="2_2nwf8"]
+
+[resource]
+script = ExtResource("1_ui3do")
+script_ref = ExtResource("2_2nwf8")

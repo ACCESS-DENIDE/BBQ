@@ -90,6 +90,12 @@ func StartGameServer(map_path:String, player_in_lobby:Dictionary):
 	for i in player_in_lobby.keys():
 		if(i!=1):
 			AddPuppet(i, player_in_lobby[i]["power"], player_in_lobby[i]["team"])
+	
+	for i in player_ref.values():
+		if(i.my_team==1):
+			GamemodeProcessor.b_team.push_back(i)
+		elif(i.my_team==2):
+			GamemodeProcessor.r_team.push_back(i)
 
 
 func DrawMapTiles(tile_data:Dictionary):
@@ -157,6 +163,11 @@ func SyncPuppet(id:String, new_pos:Vector2, vel:Vector2, rot:float, delta:float)
 		return
 	player_ref[id].SyncFunc(new_pos, vel, delta, rot)
 
+func MakeAction(id:String, action_id:int):
+	if(!((Networking.is_data_loaded) && (is_started))):
+		return
+	player_ref[id].MakeAction(action_id)
+
 func OnPingTime():
 	Networking.MassPing()
 	pass # Replace with function body.
@@ -188,3 +199,8 @@ func EnableUI(ref:Node):
 
 func GetPlayer()->Node:
 	return $PlayerComplex.pl_ref
+
+
+func DebugLine(start:Vector2, end:Vector2):
+	$Debug.points[0]=start
+	$Debug.points[1]=end

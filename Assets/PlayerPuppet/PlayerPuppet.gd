@@ -12,14 +12,23 @@ var predict_vel:Vector2=Vector2(0, 0)
 
 @onready var puppet_anim:AnimatedSprite2D = $PuppetAnim
 
+@export var gun:Gun
+
+@export var abil:Ability
+
 var my_team:int
 
 var is_dashed:bool=false
 var is_dash_cd:bool=true
 
-var hp:int
+var is_invincible:bool=false
+var is_stunned:bool=false
+var is_shocked:bool=false
+var poison_dmg:int=0
+
+var hp:float
 var base_hp:int
-var shield:int
+var shield:float
 var base_shield:int
 var items=[]
 var ability_cd:int
@@ -30,23 +39,29 @@ var ability_id:int
 
 var is_speed_loaded:bool=false
 
+var is_shooting:bool
+var last_shoot:int
+var reload_started:int
+var bulets_in_mag:int
+var is_hold:bool=false
+var is_reloading:bool=false
 
 func DashSwitch(flg:bool):
 	if(flg):
-		if(is_dash_cd):
+		if(is_dash_cd && !is_stunned):
 			is_dashed=true
 			is_dash_cd=false
 			speed=speed*GameGlobalVar.dash_multplyer
-			$DashDuration.start(GameGlobalVar.dash_duration*(items[1]+1))
+			
+			$DashDuration.start(GameGlobalVar.dash_duration+(items[1]*GameGlobalVar.added_dash_time_sec))
 			if(Networking.is_authority):
 				Networking.SyncSpeed(net_id, base_speed, speed)
 	else:
 		if(is_dashed):
 			is_dashed=false
-			speed=base_speed*float(1+float(items[0]*0.3))
+			speed=base_speed*float(1+float(items[0]*(GameGlobalVar.speed_increaser_percent/100)))
 			$DashDuration.stop()
-			$DashCD.start(GameGlobalVar.dash_cd)
-			print("DashCD")
+			$DashCD.start(GameGlobalVar.dash_cd*float(Math.HardPercent(GameGlobalVar.dash_cd_decrease_percent, items[2])))
 			if(Networking.is_authority):
 				Networking.SyncSpeed(net_id, base_speed, speed)
 
@@ -94,7 +109,7 @@ func InitGame(id_abil:int, team:int):
 			5:
 				ability_cd=GameGlobalVar.invincibility_base_reload
 				pass
-		
+		bulets_in_mag=gun.mag_size
 		ability_cd_val=0
 		var dict={}
 		gold=0
@@ -116,6 +131,9 @@ func InitGame(id_abil:int, team:int):
 		dict["State"]=ability_cd_val
 		dict["Base"]=ability_cd
 		Networking.SyncUiState(net_id, 3, dict)
+		dict["State"]=bulets_in_mag
+		dict["Base"]=gun.mag_size
+		Networking.SyncUiState(net_id, 5, dict)
 		items.clear()
 		for i in range(0, 15):
 			items.push_back(0)
@@ -123,10 +141,14 @@ func InitGame(id_abil:int, team:int):
 		
 		
 		is_speed_loaded=true
-		
+		last_shoot=-1
 		dict.clear()
 		dict["Amount"]=items
 		Networking.SyncUiState(net_id, 4, dict)
+		dict.clear()
+		dict["DisplayName"]=gun.display_name
+		Networking.SyncUiState(net_id, 6, dict)
+		dict.clear()
 		
 		Networking.SyncSpeed(net_id, base_speed, speed)
 
@@ -173,9 +195,36 @@ func _physics_process(_delta):
 		velocity.y = move_toward(velocity.y, 0, base_speed)
 	move_and_slide()
 	
+	if(is_shooting):
+		if(bulets_in_mag==0):
+			Reload()
+		if(is_hold):
+			if(gun.is_automatic):
+				if((Time.get_ticks_msec()-last_shoot>gun.fire_rate*1000 || last_shoot==-1) && bulets_in_mag>0):
+					bulets_in_mag-=1
+					gun.Shoot(position, rotation, items, get_world_2d().direct_space_state, self)
+					UpdateUI()
+					last_shoot=Time.get_ticks_msec()
+		else:
+			if((Time.get_ticks_msec()-last_shoot>gun.fire_rate*1000|| last_shoot==-1) && bulets_in_mag>0):
+				bulets_in_mag-=1
+				gun.Shoot(position, rotation, items, get_world_2d().direct_space_state, self)
+				is_hold=true
+				UpdateUI()
+				last_shoot=Time.get_ticks_msec()
 	
 	$StabelNode/Label.text=str(position)
 
+
+func _process(delta):
+	
+	if(Networking.is_authority):
+		hp-=poison_dmg*delta
+		if(!is_shocked):
+			shield+=(GameGlobalVar.shield_per_sec_regen*(1+items[5]))*delta
+			if(shield>base_shield):
+				shield=base_shield
+	
 
 func SetAnim(id:int):
 	match id:
@@ -188,6 +237,28 @@ func SetAnim(id:int):
 			puppet_anim.play("run")
 			pass
 
+func MakeAction(action_id:int):
+	match action_id:
+		1:
+			BeginShoot()
+		-1:
+			StopShoot()
+		2:
+			Reload()
+
+func Reload():
+	if(!is_reloading):
+		is_reloading=true
+		bulets_in_mag=0
+		UpdateUI()
+		$ReloadTimer.start(gun.reload_time*Math.HardPercent(GameGlobalVar.reload_speed_decrease_percent, items[14]))
+
+func BeginShoot():
+	is_shooting=true
+
+func StopShoot():
+	is_shooting=false
+	is_hold=false
 
 func DashCooldownTime():
 	is_dash_cd=true
@@ -196,3 +267,87 @@ func DashCooldownTime():
 func DashDurationTime():
 	DashSwitch(false)
 	pass # Replace with function body.
+
+func ReloadTimerOut():
+	is_reloading=false
+	bulets_in_mag=gun.mag_size+items[12]*GameGlobalVar.bulets_per_item
+	UpdateUI()
+
+func UpdateUI():
+	var dict={}
+	dict["State"]=hp
+	dict["Base"]=base_hp
+	Networking.SyncUiState(net_id, 0, dict)
+	dict["State"]=shield
+	dict["Base"]=base_shield
+	Networking.SyncUiState(net_id, 1, dict)
+	dict["State"]=gold
+	dict["Base"]=0
+	Networking.SyncUiState(net_id, 2, dict)
+	dict["State"]=ability_cd_val
+	dict["Base"]=ability_cd
+	Networking.SyncUiState(net_id, 3, dict)
+	dict["State"]=bulets_in_mag
+	dict["Base"]=gun.mag_size
+	Networking.SyncUiState(net_id, 5, dict)
+	dict.clear()
+	dict["Amount"]=items
+	Networking.SyncUiState(net_id, 4, dict)
+	dict.clear()
+	dict["DisplayName"]=gun.display_name
+	Networking.SyncUiState(net_id, 6, dict)
+	dict.clear()
+
+
+func Damage(damage:int, modifiers:Array, is_pierce:bool):
+	if(is_invincible):
+		return
+	var rng=RandomNumberGenerator.new()
+	if(rng.randf()>(pow(1-(float(GameGlobalVar.ignore_chance_percent)/100), items[11]))):
+		return
+	
+	if(shield>0):
+		if(is_pierce):
+			var remnant_damage=damage-shield
+			if(remnant_damage>=0):
+				shield=0
+				hp=hp-remnant_damage
+			else:
+				shield=shield-damage
+		else:
+			shield=shield-damage
+			if(shield<0):
+				shield=0
+	else:
+		hp=hp-damage
+		if(hp<=0):
+			Death()
+	
+	if(modifiers[0]>0):
+		poison_dmg=damage/10
+		$PoisonDmg.start(modifiers[0])
+	
+	if(modifiers[1]>0):
+		is_stunned=true
+		$StunTimer.start(modifiers[1])
+	
+	if(modifiers[2]>0):
+		is_shocked=true
+		$OffTimer.start(modifiers[2])
+	
+	UpdateUI()
+	
+	pass
+
+func PoisonOut():
+	poison_dmg=0
+
+func StunOut():
+	is_stunned=false
+
+func ShockOut():
+	is_shocked=false
+
+
+func Death():
+	pass

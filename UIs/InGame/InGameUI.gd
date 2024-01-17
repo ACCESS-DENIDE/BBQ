@@ -7,7 +7,8 @@ extends Control
 #2-Gold
 #3-Ability
 #4-Items
-#5-GunUI
+#5-Gun bulets
+#6-Gun name
 
 
 var sb:SubViewport
@@ -44,6 +45,12 @@ func UpdateInfo(ui_id:int, val:Dictionary):
 			pass
 		4:
 			Gameplay.GetPlayer().items=val["Amount"]
+			pass
+		5:
+			$GunInfo/WeaponAmo.text=str(val["State"])+"/"+str(val["Base"])
+			pass
+		6:
+			$GunInfo/WeaponName.text=val["DisplayName"]
 			pass
 		
 	pass

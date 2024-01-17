@@ -1,5 +1,9 @@
 extends Control
 
+var red_team_icon=preload("res://Resourses/Icons/RedTeam.tres")
+var blue_team_icon=preload("res://Resourses/Icons/BlueTeam.tres")
+var no_team_icon=preload("res://Resourses/Icons/NoTeam.tres")
+
 @onready var open_switch_gamemode = $Grid/SubGrid/Open_switch_gamemode
 @onready var open_switch_map = $Grid/SubGrid/Open_switch_map
 
@@ -89,8 +93,29 @@ func MassUpdatePlayerList():
 
 func UpdatePlayerList(arr:Array):
 	player_list.clear()
+	var flag:bool=true
+	var count:int=-1
 	for i in arr:
-		player_list.add_item(i)
+		if(flag):
+			flag=false
+			count+=1
+			player_list.add_item(i)
+		else:
+			flag=true
+			match int(i):
+				1:
+					player_list.set_item_icon(count, blue_team_icon)
+					pass
+				2:
+					player_list.set_item_icon(count, red_team_icon)
+					pass
+				0:
+					player_list.set_item_icon(count, no_team_icon)
+					pass
+			
+	
+	
+	
 
 func DisplayData(dat:Dictionary):
 	
@@ -104,6 +129,7 @@ func GetShortPlayerList()->Array:
 	
 	for i in player_in_lobby.values():
 		arr.push_back(i["display_name"])
+		arr.push_back(i["team"])
 	
 	return arr
 
@@ -112,6 +138,19 @@ func UpdatePlayerData(peer_id:int, new_val:String, id:int):
 	match id:
 		2:
 			player_in_lobby[peer_id]["team"]=int(new_val)
+			player_in_lobby.keys().find(peer_id)
+			match int(new_val):
+				1:
+					player_list.set_item_icon(player_in_lobby.keys().find(peer_id), blue_team_icon)
+					pass
+				2:
+					player_list.set_item_icon(player_in_lobby.keys().find(peer_id), red_team_icon)
+					pass
+				0:
+					player_list.set_item_icon(player_in_lobby.keys().find(peer_id), no_team_icon)
+					pass
+			
+			
 			pass
 		3:
 			player_in_lobby[peer_id]["power"]=int(new_val)
@@ -187,6 +226,8 @@ func SetNewVal( new_val:int, id:int):
 		2:
 			team_display.text=GameGlobalVar.teams[new_val]
 			player_in_lobby[net_id]["team"]=new_val
+			if(Networking.is_authority):
+				MassUpdatePlayerList()
 			Networking.LobbyDataSync(str(new_val), 2)
 			pass
 		3:

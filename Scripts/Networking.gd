@@ -268,6 +268,14 @@ func StartGameSignal(map_data:Dictionary, player_in_lobby:Dictionary):
 
 ######LOBBY DATA TRANSMISSION
 
+func RequestAction(action_id:int):
+	rpc_id(1, "ExecuteAction", action_id, multiplayer.get_unique_id())
+
+@rpc("any_peer", "reliable")
+func ExecuteAction(action_id:int, sender_id:int):
+	Gameplay.MakeAction("player#"+str(sender_id), action_id)
+	pass
+
 func LobbyDataSync(val:String, id:int):
 	if(!is_online):
 		return
@@ -297,10 +305,10 @@ func SendLobbyDataSync(val:String, id:int):
 		return
 	if(id==0 || id==1):
 		return
-	
+	if(lobby_ui_ref==null):
+		return
 	lobby_ui_ref.UpdatePlayerData(multiplayer.get_remote_sender_id(), str(val), id)
-	if(id==4):
-		SetPlayerList()
+	SetPlayerList()
 
 
 

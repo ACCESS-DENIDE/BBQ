@@ -1,14 +1,16 @@
-[gd_scene load_steps=7 format=3 uid="uid://dk6nk25xuwvdd"]
+[gd_scene load_steps=8 format=3 uid="uid://dk6nk25xuwvdd"]
 
 [ext_resource type="SpriteFrames" uid="uid://btek5xije1bu4" path="res://Resourses/Animations/player.tres" id="1_20ujp"]
 [ext_resource type="Script" path="res://Assets/Player/Player.gd" id="1_kmj6x"]
 [ext_resource type="Shape2D" uid="uid://bc4vlcp7rq0x4" path="res://Resourses/Collisions/player_col.tres" id="2_qqiq8"]
+[ext_resource type="Resource" uid="uid://iygf5r3vuafr" path="res://Resourses/Guns/BasePistol.tres" id="2_r0gmm"]
 [ext_resource type="Texture2D" uid="uid://37k3b8e6t78u" path="res://Resourses/Textures/VolumetricLightPlaceholder.png" id="4_gkcr0"]
 [ext_resource type="Texture2D" uid="uid://dvchh7m7qfxi" path="res://Resourses/Textures/RenderSquereText.tres" id="5_i8xjk"]
 [ext_resource type="Texture2D" uid="uid://dvhwvhc6yywc6" path="res://Resourses/Textures/ViewCircle.tres" id="6_is18t"]
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_kmj6x")
+gun = ExtResource("2_r0gmm")
 
 [node name="PlayerAnim" type="AnimatedSprite2D" parent="."]
 light_mask = 2
@@ -72,5 +74,21 @@ offset_bottom = 42.0
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="ReloadTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="PoisonDmg" type="Timer" parent="."]
+one_shot = true
+
+[node name="StunTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="OffTimer" type="Timer" parent="."]
+one_shot = true
+
 [connection signal="timeout" from="DashDuration" to="." method="DashDurationTime"]
 [connection signal="timeout" from="DashCD" to="." method="DashCooldownTime"]
+[connection signal="timeout" from="ReloadTimer" to="." method="ReloadTimerOut"]
+[connection signal="timeout" from="PoisonDmg" to="." method="PoisonOut"]
+[connection signal="timeout" from="StunTimer" to="." method="StunOut"]
+[connection signal="timeout" from="OffTimer" to="." method="ShockOut"]

@@ -13,21 +13,21 @@
 
 ### ITEMS ###
 
-Black monster-movment speed
-Fart in a bottle-give additional roll
-Chadium-Roll cool down decrese
-Red shugar-increse HP
-FoRtNiTe ShIeLd LiQuId-Increase Shield
-Fortnite card (for 20$)-Increase Shield regeneration
-Crowbar-crit chance
-Mole in a bottle(KROTOVUHA)-poison damage
-Glass present-increase crit multiplyer
-Iceeagle-frost damage
-Battery-electrodamage
-Bear-chanse to ignore damage
-Sticky belt- increase mag size
-LUBE-increase reload spead
-Gnome-increase reload speed
+[0]Black monster-movment speed
+[1]Fart in a bottle-give additional roll
+[2]Chadium-Roll cool down decrese
+[3]Red shugar-increse HP
+[4]FoRtNiTe ShIeLd LiQuId-Increase Shield
+[5]Fortnite card (for 20$)-Increase Shield regeneration
+[6]Crowbar-crit chance
+[7]Mole in a bottle(KROTOVUHA)-poison damage
+[8]Glass present-increase crit multiplyer
+[9]Iceeagle-frost damage
+[10]Battery-electrodamage
+[11]Bear-chanse to ignore damage
+[12]Sticky belt- increase mag size
+[13]LUBE-increase fire reate spead
+[14]Gnome-increase reload speed
 
 
 ### WEAPONS ###

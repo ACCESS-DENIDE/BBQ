@@ -24,12 +24,9 @@ rotation = 1.5708
 shape = ExtResource("2_qqiq8")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-visible = false
-enabled = false
 zoom = Vector2(4, 4)
 
 [node name="ViewCone" type="PointLight2D" parent="."]
-visible = false
 rotation = -1.5708
 shadow_enabled = true
 shadow_color = Color(0, 0, 0, 1)
@@ -39,7 +36,6 @@ offset = Vector2(318, 5)
 texture_scale = 3.0
 
 [node name="RenderCircle" type="PointLight2D" parent="."]
-visible = false
 enabled = false
 range_item_cull_mask = 2
 texture = ExtResource("5_i8xjk")

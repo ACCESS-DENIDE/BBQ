@@ -11,7 +11,8 @@ var teams=["Random", "Blue", "Red"]
 var player_base_speed=19000
 var player_base_hp=100
 var player_base_shield=50
-
+var shield_recharge_cd=1000
+var respawn_time=3
 
 #ABILITY
 var teleport_base_reload=2

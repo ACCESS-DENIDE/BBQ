@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://jggwa78afunh"]
+
+[ext_resource type="Script" path="res://Assets/Tracer/Tracer.gd" id="1_tdgow"]
+
+[node name="Tracer" type="Node2D"]
+script = ExtResource("1_tdgow")
+
+[node name="Trace Line" type="Line2D" parent="."]
+points = PackedVector2Array(0, 0, 0, 0)
+width = 1.0
+
+[node name="Lifetime" type="Timer" parent="."]
+one_shot = true
+autostart = true
+
+[connection signal="timeout" from="Lifetime" to="." method="LifetimeEnd"]

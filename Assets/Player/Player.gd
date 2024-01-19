@@ -2,41 +2,36 @@ extends CharacterBody2D
 
 class_name Player
 
-var r_team_anim=preload("res://Resourses/Animations/player.tres")
-var b_team_anim=preload("res://Resourses/Animations/player2.tres")
-var z_team_anim=preload("res://Resourses/Animations/zombie.tres")
-
-
-
-var base_speed
-var speed = 300.0
-
-var is_dashed:bool=false
-var is_dash_cd:bool=true
-var is_invincible:bool=false
-var is_stunned:bool=false
-var is_shocked:bool=false
-var poison_dmg:int=0
-
-var my_team:int
-
-var net_id:int
+const  r_team_anim=preload("res://Resourses/Animations/player.tres")
+const b_team_anim=preload("res://Resourses/Animations/player2.tres")
+const z_team_anim=preload("res://Resourses/Animations/zombie.tres")
 
 @export var gun:Gun
 
 @export var abil:Ability
 
 @onready var player_anim = $PlayerAnim
+@onready var camera_2d = $Camera2D
 
-@export var my_complex:Node2D
+var base_speed:float =0.0
+var speed:float = 0.0
 
-@export var camera_2d:Camera2D
+var net_id:int
 
-var disabled=true
-
-var is_dead=false
-
+var my_team:int
 var ability_id:int
+
+var is_dashed:bool=false
+var is_dash_cd:bool=true
+
+var is_invincible:bool=false
+var is_stunned:bool=false
+var is_shocked:bool=false
+var poison_dmg:int=0
+
+var is_dead:bool=false
+
+var is_initiated:bool=false
 
 var hp:float
 var base_hp:int
@@ -46,7 +41,7 @@ var items=[]
 var ability_cd:int
 var ability_cd_val:int
 var gold:int
-
+var shield_recharge_cd:int
 
 var is_shooting:bool
 var last_shoot:int
@@ -54,6 +49,7 @@ var reload_started:int
 var bulets_in_mag:int
 var is_hold:bool=false
 var is_reloading:bool=false
+var last_hit:int=-1
 
 func DashSwitch(flg:bool):
 	if(flg):
@@ -73,6 +69,7 @@ func DashSwitch(flg:bool):
 			$DashCD.start(GameGlobalVar.dash_cd*float(Math.HardPercent(GameGlobalVar.dash_cd_decrease_percent, items[2])))
 			if(Networking.is_authority):
 				Networking.SyncSpeed(net_id, base_speed, speed)
+	Networking.SyncSpeed(net_id, base_speed, speed)
 
 func LoadSpeed(base_sn:float, cur_sn:float):
 	speed=cur_sn
@@ -90,8 +87,8 @@ func SwitchTeam(new_team:int):
 			$PlayerAnim.sprite_frames=r_team_anim
 			pass
 
-func InitGame(id_abil:int, team:int):
-	
+func InitGame(id_abil:int, team:int, un_id:int):
+	net_id=un_id
 	my_team=team
 	
 	match team:
@@ -175,24 +172,28 @@ func InitGame(id_abil:int, team:int):
 		dict.clear()
 		
 		Networking.SyncSpeed(net_id, base_speed, speed)
-		
+		shield_recharge_cd=GameGlobalVar.shield_recharge_cd
+		Respawn()
+	is_initiated=true
 
 func SyncFunc(new_pos:Vector2, vel:Vector2, delta:float, rot:float):
 	pass
 
 
 func _process(delta):
-	if(!visible):
+	if(!is_initiated):
 		return
 	
-
 	
 	if(Networking.is_authority && Gameplay.is_started):
 		hp-=poison_dmg*delta
 		if(!is_shocked):
-			shield+=(GameGlobalVar.shield_per_sec_regen*(1+items[5]))*delta
-			if(shield>base_shield):
-				shield=base_shield
+			if(Time.get_ticks_msec()-last_hit>shield_recharge_cd):
+				shield+=(GameGlobalVar.shield_per_sec_regen*(1+items[5]))*delta
+				if(shield>base_shield+GameGlobalVar.additional_shield_amount*items[4]):
+					shield=base_shield
+		UpdateUI(0)
+		UpdateUI(1)
 	
 	if(Input.is_action_just_pressed("ZoomIn")):
 		if(camera_2d.zoom.x<4):
@@ -221,7 +222,7 @@ func _process(delta):
 var packet_count:int=0
 
 func _physics_process(_delta):
-	if(disabled):
+	if(!is_initiated):
 		return
 	
 	if(is_shooting):
@@ -232,14 +233,14 @@ func _physics_process(_delta):
 				if((Time.get_ticks_msec()-last_shoot>gun.fire_rate*1000 || last_shoot==-1) && bulets_in_mag>0):
 					bulets_in_mag-=1
 					gun.Shoot(position, rotation, items, get_world_2d().direct_space_state, self)
-					UpdateUI()
+					UpdateUI(5)
 					last_shoot=Time.get_ticks_msec()
 		else:
 			if((Time.get_ticks_msec()-last_shoot>gun.fire_rate*1000|| last_shoot==-1) && bulets_in_mag>0):
 				bulets_in_mag-=1
 				gun.Shoot(position, rotation, items, get_world_2d().direct_space_state, self)
 				is_hold=true
-				UpdateUI()
+				UpdateUI(5)
 				last_shoot=Time.get_ticks_msec()
 	
 	var local_pos=get_global_mouse_position()-position
@@ -250,9 +251,15 @@ func _physics_process(_delta):
 		rotation=asin(0-local_pos.normalized().y)+(PI/2)-PI
 	
 	if(Input.is_action_just_pressed("Secondary")):
-		Networking.DashPlayer(true)
+		if(Networking.is_authority):
+			DashSwitch(true)
+		else:
+			Networking.RequestAction(3)
 	if(Input.is_action_just_released("Secondary")):
-		Networking.DashPlayer(false)
+		if(Networking.is_authority):
+			DashSwitch(false)
+		else:
+			Networking.RequestAction(-3)
 	
 	var direction:Vector2=Vector2(0,0)
 	if(!is_dead):
@@ -278,9 +285,7 @@ func _physics_process(_delta):
 	$StabelNode/Label.text=str(position)
 	
 	
-	my_complex.UpdatePos(position)
 	Networking.SyncPosPlayer(name, position, velocity, rotation)
-	my_complex.SetLitRot(rotation)
 	$StabelNode.rotation=-rotation
 	
 
@@ -292,7 +297,7 @@ func SetAnim(id:int):
 	pass
 
 func _input(event):
-	if(disabled):
+	if(!is_initiated):
 		return
 	if(event.is_action_pressed("Primary")):
 		if(Networking.is_authority):
@@ -314,7 +319,7 @@ func Reload():
 	if(!is_reloading):
 		is_reloading=true
 		bulets_in_mag=0
-		UpdateUI()
+		UpdateUI(5)
 		$ReloadTimer.start(gun.reload_time*Math.HardPercent(GameGlobalVar.reload_speed_decrease_percent, items[14]))
 
 func BeginShoot():
@@ -336,32 +341,62 @@ func DashDurationTime():
 func ReloadTimerOut():
 	is_reloading=false
 	bulets_in_mag=gun.mag_size+items[12]*GameGlobalVar.bulets_per_item
-	UpdateUI()
+	UpdateUI(5)
 
-func UpdateUI():
+func UpdateUI(update_id:int):
 	var dict={}
-	dict["State"]=hp
-	dict["Base"]=base_hp
-	Networking.SyncUiState(net_id, 0, dict)
-	dict["State"]=shield
-	dict["Base"]=base_shield
-	Networking.SyncUiState(net_id, 1, dict)
-	dict["State"]=gold
-	dict["Base"]=0
-	Networking.SyncUiState(net_id, 2, dict)
-	dict["State"]=ability_cd_val
-	dict["Base"]=ability_cd
-	Networking.SyncUiState(net_id, 3, dict)
-	dict["State"]=bulets_in_mag
-	dict["Base"]=gun.mag_size
-	Networking.SyncUiState(net_id, 5, dict)
-	dict.clear()
-	dict["Amount"]=items
-	Networking.SyncUiState(net_id, 4, dict)
-	dict.clear()
-	dict["DisplayName"]=gun.display_name
-	Networking.SyncUiState(net_id, 6, dict)
-	dict.clear()
+	match update_id:
+		0:
+			dict["State"]=hp
+			dict["Base"]=base_hp+GameGlobalVar.additional_hp_amount*items[3]
+			Networking.SyncUiState(net_id, 0, dict)
+		1:
+			dict["State"]=shield
+			dict["Base"]=base_shield+GameGlobalVar.additional_shield_amount*items[4]
+			Networking.SyncUiState(net_id, 1, dict)
+		2:
+			dict["State"]=gold
+			dict["Base"]=0
+			Networking.SyncUiState(net_id, 2, dict)
+		3:
+			dict["State"]=ability_cd_val
+			dict["Base"]=ability_cd
+			Networking.SyncUiState(net_id, 3, dict)
+		4:
+			dict.clear()
+			dict["Amount"]=items
+			Networking.SyncUiState(net_id, 4, dict)
+		5:
+			dict["State"]=bulets_in_mag
+			dict["Base"]=gun.mag_size
+			Networking.SyncUiState(net_id, 5, dict)
+		6:
+			dict["DisplayName"]=gun.display_name
+			Networking.SyncUiState(net_id, 6, dict)
+			dict.clear()
+		-1:
+			dict["State"]=hp
+			dict["Base"]=base_hp+GameGlobalVar.additional_hp_amount*items[3]
+			Networking.SyncUiState(net_id, 0, dict)
+			dict["State"]=shield
+			dict["Base"]=base_shield+GameGlobalVar.additional_shield_amount*items[4]
+			Networking.SyncUiState(net_id, 1, dict)
+			dict["State"]=gold
+			dict["Base"]=0
+			Networking.SyncUiState(net_id, 2, dict)
+			dict["State"]=ability_cd_val
+			dict["Base"]=ability_cd
+			Networking.SyncUiState(net_id, 3, dict)
+			dict["State"]=bulets_in_mag
+			dict["Base"]=gun.mag_size
+			Networking.SyncUiState(net_id, 5, dict)
+			dict.clear()
+			dict["Amount"]=items
+			Networking.SyncUiState(net_id, 4, dict)
+			dict.clear()
+			dict["DisplayName"]=gun.display_name
+			Networking.SyncUiState(net_id, 6, dict)
+			dict.clear()
 
 
 func Damage(damage:int, modifiers:Array, is_pierce:bool):
@@ -369,8 +404,9 @@ func Damage(damage:int, modifiers:Array, is_pierce:bool):
 		return
 	var rng=RandomNumberGenerator.new()
 	if(rng.randf()>(pow(1-(float(GameGlobalVar.ignore_chance_percent)/100), items[11]))):
+		#rng.free()
 		return
-	
+	#rng.free()
 	if(shield>0):
 		if(is_pierce):
 			var remnant_damage=damage-shield
@@ -399,10 +435,18 @@ func Damage(damage:int, modifiers:Array, is_pierce:bool):
 	if(modifiers[2]>0):
 		is_shocked=true
 		$OffTimer.start(modifiers[2])
-	
-	UpdateUI()
+	last_hit=Time.get_ticks_msec()
+	UpdateUI(0)
+	UpdateUI(1)
 	
 	pass
+
+func Teleport(pos:Vector2):
+	if(!Networking.is_authority):
+		return
+	
+	position=pos
+	Networking.SyncPosPlayer(name, position, velocity, rotation)
 
 func PoisonOut():
 	poison_dmg=0
@@ -413,6 +457,19 @@ func StunOut():
 func ShockOut():
 	is_shocked=false
 
+func Respawn():
+	is_dead=false
+	hp=base_hp+GameGlobalVar.additional_hp_amount*items[3]
+	shield=base_shield+GameGlobalVar.additional_shield_amount*items[4]
+	ReloadTimerOut()
+	collision_layer=1
+	visible=true
+	Teleport(GamemodeProcessor.GetRespawnLock(self))
+	UpdateUI(-1)
 
 func Death():
+	is_dead=true
+	collision_layer=0
+	visible=false
+	$RespawnTimer.start(GameGlobalVar.respawn_time)
 	pass

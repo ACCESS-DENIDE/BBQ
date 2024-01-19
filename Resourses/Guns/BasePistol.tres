@@ -5,14 +5,14 @@
 [resource]
 script = ExtResource("1_mtrpx")
 display_name = "Forest Pegion"
-damage = 0
-spread = 0.0
-mag_size = 8
+damage = 50
+spread = 90.0
+mag_size = 30
 anim_id = 0.0
 texture_ofset = Vector2(0, 0)
-reload_time = 5.0
-fire_rate = 0.0
-max_dist = 0
-bulets_per_shot = 0
+reload_time = 3.0
+fire_rate = 0.1
+max_dist = 50
+bulets_per_shot = 100
 is_automatic = true
-is_pierce = false
+is_pierce = true

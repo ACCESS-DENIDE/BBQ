@@ -290,6 +290,8 @@ func SetPlayerList():
 	if(!is_online):
 		return
 	if(is_authority):
+		if(lobby_ui_ref==null):
+			return
 		rpc("SetShortPlayerList", lobby_ui_ref.GetShortPlayerList())
 
 

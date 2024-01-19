@@ -10,10 +10,12 @@ var is_started:bool=false
 
 var player_ref={}
 
+var my_player:Node
+
 var player_spawners=[]
 
-var b_base_ref=null
-var r_base_ref=null
+var b_base_pos:Vector2
+var r_base_pos:Vector2
 
 var spawner_thread:Thread
 
@@ -36,8 +38,9 @@ func StartGameClient(map_data:Dictionary, player_in_lobby:Dictionary):
 	Networking.lobby_ui_ref=null
 	UImanager.SwitchUI("InGame")
 	$Map.visible=true
-	AddPlayer(multiplayer.get_unique_id())
-	$PlayerComplex.Preload(player_in_lobby[multiplayer.get_unique_id()]["power"], player_in_lobby[my_net_id]["team"])
+	var my_id:int=multiplayer.get_unique_id()
+	AddPlayer(my_id, player_in_lobby[my_id]["power"], player_in_lobby[my_id]["team"])
+	#$PlayerComplex.Preload(player_in_lobby[multiplayer.get_unique_id()]["power"], player_in_lobby[my_net_id]["team"])
 	
 	
 	
@@ -49,27 +52,14 @@ func StartGameServer(map_path:String, player_in_lobby:Dictionary):
 	is_started=true
 	active_items=0
 	active_props=0
-	b_base_ref=null
+	b_base_pos=Vector2(0,0)
+	r_base_pos=Vector2(0,0)
 	player_inf=player_in_lobby
-	var r_base_ref=null
+	
 	if(Networking.is_authority):
 		GamemodeProcessor.AssignTeams(player_in_lobby)
 		var Loader=FileAccess.open("Maps/"+map_path, FileAccess.READ)
 		var map_data=JSON.parse_string(Loader.get_as_text())
-		
-		var shift_coord:Vector2i=(str_to_var("Vector2i"+map_data["Shift"]))
-		
-		var spawner_data=map_data["SpawnerData"]
-		
-		var new_spawner_data={}
-		
-		for i in spawner_data.keys():
-			var old_x:int
-			var old_y:int
-			old_x=int(i.split(":")[0])
-			old_y=int(i.split(":")[1])
-			new_spawner_data[str(old_x-shift_coord.x)+":"+str(old_y-shift_coord.y)]=spawner_data[i]
-	
 		
 		map_store=map_data
 		
@@ -84,8 +74,9 @@ func StartGameServer(map_path:String, player_in_lobby:Dictionary):
 	Networking.lobby_ui_ref=null
 	UImanager.SwitchUI("InGame")
 	$Map.visible=true
-	AddPlayer(multiplayer.get_unique_id())
-	$PlayerComplex.Preload(player_in_lobby[1]["power"], player_in_lobby[1]["team"])
+	var my_id:int=multiplayer.get_unique_id()
+	AddPlayer(my_id, player_in_lobby[my_id]["power"], player_in_lobby[my_id]["team"])
+	#$PlayerComplex.Preload(player_in_lobby[1]["power"], player_in_lobby[1]["team"])
 	
 	for i in player_in_lobby.keys():
 		if(i!=1):
@@ -117,13 +108,25 @@ func DrawMapTiles(tile_data:Dictionary):
 				
 				if(Vector2i(tile.x, tile.y)==Vector2i(2,0)):
 					map_ref.set_cell(2, cord, 2, Vector2i(tile.x, tile.y), tile.z)
-					if(b_base_ref==null):
+					if(b_base_pos==Vector2(0,0)):
 						map_ref.set_cell(2, cord, 2, Vector2i(tile.x, tile.y), 1)
-						b_base_ref=unstringed
+						b_base_pos=cord*32
 					else:
 						map_ref.set_cell(2, cord, 2, Vector2i(tile.x, tile.y), 2)
 						
-						r_base_ref=unstringed
+						r_base_pos=cord*32
+				elif(Vector2i(tile.x, tile.y)==Vector2i(1,0)):
+					var test_here=map_store["SpawnerData"][str(cord.x)+":"+str(cord.y)]["Mode"]
+					match int(test_here):
+						0:
+							player_spawners.push_back(cord*32)
+						1:
+							prop_spawners.push_back(cord*32)
+						2:
+							item_spawners.push_back(cord*32)
+						3:
+							gameplay_spawners.push_back(cord*32)
+					
 		
 		if(map_size.x<cord.x):
 			map_size.x=cord.x
@@ -132,21 +135,31 @@ func DrawMapTiles(tile_data:Dictionary):
 	
 	pass
 
-func AddPlayer(id:int):
-	player_ref["player#"+str(id)]=$PlayerComplex.pl_ref
-	$PlayerComplex.SwitchPlayer(id, true)
+func AddPlayer(id:int, id_abil:int, team:int):
+	var new_pl=player_prel.instantiate()
+	add_child(new_pl)
+	new_pl.name="player#"+str(id)
+	my_player=new_pl
+	new_pl.InitGame(id_abil, team, id)
+	player_ref["player#"+str(id)]=new_pl
+	#$PlayerComplex.SwitchPlayer(id, true)
 	pass
 
 func RemovePlayer(id:int):
-	$PlayerComplex.SwitchPlayer(id, false)
+	remove_child(my_player)
+	player_ref.erase("player#"+str(id))
+	my_player.queue_free()
+	my_player=null
+	#$PlayerComplex.SwitchPlayer(id, false)
 	pass
 
 func AddPuppet(id:int, id_abil:int, team:int):
 	var new_puppet=pupppet_prel.instantiate()
 	new_puppet.name="player#"+str(id)
 	new_puppet.net_id=id
-	$PlayerComplex.AddHideNode(new_puppet)
-	new_puppet.InitGame(id_abil, team)
+	#$PlayerComplex.AddHideNode(new_puppet)
+	add_child(new_puppet)
+	new_puppet.InitGame(id_abil, team, id)
 	player_ref["player#"+str(id)]=new_puppet
 	pass
 
@@ -187,7 +200,15 @@ func SwitchTeam(id:String, id_team:int):
 
 func ClearAll():
 	$Map.visible=false
-	$PlayerComplex.visible=false
+	my_player=null
+	
+	for i in player_ref.values():
+		remove_child(i)
+		i.queue_free()
+	player_ref.clear()
+	
+	
+	
 	pass
 
 
@@ -198,9 +219,10 @@ func EnableUI(ref:Node):
 
 
 func GetPlayer()->Node:
-	return $PlayerComplex.pl_ref
+	return my_player
 
 
 func DebugLine(start:Vector2, end:Vector2):
-	$Debug.points[0]=start
-	$Debug.points[1]=end
+	var new_tracer=preload("res://Assets/Tracer/Tracer.tscn").instantiate()
+	new_tracer.Init(start, end)
+	call_deferred("add_child", new_tracer)

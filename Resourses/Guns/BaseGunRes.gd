@@ -17,7 +17,21 @@ class_name Gun
 @export var is_pierce:bool
 
 func Shoot(pos:Vector2, rot:float, items:Array, space2d:PhysicsDirectSpaceState2D, shooter:Node):
-	Pew(pos, rot, items, space2d, shooter)
+	var thread_arr=[]
+	
+	for i in range(0, bulets_per_shot):
+		var new_th=Thread.new()
+		new_th.start(Pew.bind(pos, rot, items, space2d, shooter))
+		thread_arr.push_back(new_th)
+	
+	var cou:int=0
+	
+	while (thread_arr.size()>cou):
+		if(!thread_arr[cou].is_alive()):
+			thread_arr[cou].wait_to_finish()
+			cou+=1
+			
+	thread_arr.clear()
 	pass
 
 func Pew(pos:Vector2, rot:float, items:Array, space2d:PhysicsDirectSpaceState2D, shooter:Node):
@@ -33,7 +47,7 @@ func Pew(pos:Vector2, rot:float, items:Array, space2d:PhysicsDirectSpaceState2D,
 	end_pos.y=pos.y+(0-cos(rot))*max_dist
 	Gameplay.DebugLine(pos, end_pos)
 	
-	var query = PhysicsRayQueryParameters2D.create(pos, end_pos)
+	var query = PhysicsRayQueryParameters2D.create(pos, end_pos, 0xFFFFFFFF, GamemodeProcessor.GetAlly(shooter))
 	var result = space2d.intersect_ray(query)
 	var modifiers=[]
 	
@@ -42,12 +56,11 @@ func Pew(pos:Vector2, rot:float, items:Array, space2d:PhysicsDirectSpaceState2D,
 	modifiers.push_back(GameGlobalVar.special_disabled_per_batt_sec*items[10])
 	
 	if(result.size()==0):
+		#rng.free()
 		return
 	
 	
-	result.collider.queue_free()
-	
-	#if(result.collider.has_method("Damage")):
-	#	result.collider.Damage(damage, modifiers, is_pierce)
-	
+	if(result.collider.has_method("Damage")):
+		result.collider.Damage(damage, modifiers, is_pierce)
+	#rng.free()
 	pass

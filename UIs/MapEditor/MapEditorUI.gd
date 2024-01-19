@@ -247,9 +247,17 @@ func OnBtnSave():
 	
 	full_map_data["GmMatrix"]=gm_matrix
 	
-	full_map_data["SpawnerData"]=my_par.spawner_info
+	var spawner_info_edit={}
+	var vec_shift:Vector2=my_par.start_point_global
 	
-	full_map_data["Shift"]=my_par.start_point_global
+	var spawner_info_ref=my_par.spawner_info
+	
+	for i in spawner_info_ref.keys():
+		spawner_info_edit[str(int(i.split(":")[0])-vec_shift.x+1)+":"+str(int(i.split(":")[1])-vec_shift.y+1)]=spawner_info_ref[i]
+	
+	full_map_data["SpawnerData"]=spawner_info_edit
+	
+	full_map_data["Shift"]=vec_shift
 	
 	full_map_data["Map"]=my_par.StringifyMap()
 	

@@ -285,7 +285,9 @@ func CheckReady():
 		Networking.LobbyUpdate(lobby_params)
 		
 		if(am==ready_am):
+			GamemodeProcessor.AsignGamemode(lobby_params["GM"])
 			Gameplay.StartGameServer(GameGlobalVar.loaded_maps[GameGlobalVar.loaded_maps.keys()[map_id]], player_in_lobby)
+			
 
 func OnSetNameDown():
 	display_name=$Grid/SubGrid/Text_name.text

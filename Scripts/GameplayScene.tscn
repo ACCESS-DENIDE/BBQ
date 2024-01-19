@@ -1,7 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://dvr4plt7peh4s"]
+[gd_scene load_steps=3 format=3 uid="uid://dvr4plt7peh4s"]
 
 [ext_resource type="Script" path="res://Scripts/Gameplay.gd" id="1_k6fb3"]
-[ext_resource type="PackedScene" uid="uid://cua8ivyoc2iea" path="res://Assets/PlayerComplex/PlayerComplex.tscn" id="2_isud3"]
 [ext_resource type="TileSet" uid="uid://rvj7anb8c7l6" path="res://Resourses/TileMaps/MapObjects.tres" id="2_rifhy"]
 
 [node name="GameplayScene" type="Node2D"]
@@ -26,9 +25,5 @@ layer_1/tile_data = PackedInt32Array(-262154, 0, 0)
 layer_2/name = "GM"
 layer_2/modulate = Color(0.498039, 0.498039, 0.498039, 1)
 layer_2/tile_data = PackedInt32Array()
-
-[node name="PlayerComplex" parent="." node_paths=PackedStringArray("t_map") instance=ExtResource("2_isud3")]
-visible = false
-t_map = NodePath("../Map")
 
 [connection signal="timeout" from="PingTime" to="." method="OnPingTime"]

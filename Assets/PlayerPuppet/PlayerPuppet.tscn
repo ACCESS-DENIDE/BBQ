@@ -61,6 +61,7 @@ one_shot = true
 
 [connection signal="timeout" from="DashDuration" to="." method="DashDurationTime"]
 [connection signal="timeout" from="DashCD" to="." method="DashCooldownTime"]
+[connection signal="timeout" from="RespawnTimer" to="." method="Respawn"]
 [connection signal="timeout" from="ReloadTimer" to="." method="ReloadTimerOut"]
 [connection signal="timeout" from="PoisonDmg" to="." method="PoisonOut"]
 [connection signal="timeout" from="StunTimer" to="." method="StunOut"]

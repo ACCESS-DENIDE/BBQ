@@ -137,6 +137,9 @@ func RoundRobinArray(inp:Array)->Array:
 var rr_list:Array
 func GetRandomSpawn(ref:Node)->Vector2:
 	if(rr_list.size()==0):
-		rr_list=RoundRobinArray(Gameplay.player_spawners)
+		for i in Gameplay.player_spawners:
+			rr_list.push_back(i)
+		randomize()
+		rr_list.shuffle()
 	
 	return rr_list.pop_front()

@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://dvr4plt7peh4s"]
+[gd_scene load_steps=4 format=3 uid="uid://dvr4plt7peh4s"]
 
 [ext_resource type="Script" path="res://Scripts/Gameplay.gd" id="1_k6fb3"]
 [ext_resource type="TileSet" uid="uid://rvj7anb8c7l6" path="res://Resourses/TileMaps/MapObjects.tres" id="2_rifhy"]
+[ext_resource type="PackedScene" uid="uid://cdh1w34hhdk7a" path="res://Assets/Randomizer/Randomizer.tscn" id="3_70sv6"]
 
 [node name="GameplayScene" type="Node2D"]
 script = ExtResource("1_k6fb3")
@@ -25,5 +26,8 @@ layer_1/tile_data = PackedInt32Array(-262154, 0, 0)
 layer_2/name = "GM"
 layer_2/modulate = Color(0.498039, 0.498039, 0.498039, 1)
 layer_2/tile_data = PackedInt32Array()
+
+[node name="Randomizer" parent="." instance=ExtResource("3_70sv6")]
+position = Vector2(-194, -164)
 
 [connection signal="timeout" from="PingTime" to="." method="OnPingTime"]

@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://chgmn4limpmx0"]
+
+[ext_resource type="SpriteFrames" uid="uid://cd2nkvfxs0kgd" path="res://Resourses/Animations/explosion.tres" id="1_fqf0p"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_uareu"]
+
+[node name="Explosion" type="Area2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_uareu")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("1_fqf0p")
+animation = &"Kabom"
+frame = 47
+frame_progress = 1.0

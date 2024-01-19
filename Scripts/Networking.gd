@@ -252,6 +252,20 @@ func Kick(id:int, reason:String):
 	print("Player id <"+str(id)+"> was kicked, reason:" +reason)
 	pass
 
+func ForceSync(id:int, pos:Vector2):
+	rpc_id(id, "ForceSyncGetter", pos)
+
+func SendSignal(id_signal:int, player_id:int):
+	rpc("GetSignal", id_signal, player_id)
+	
+
+@rpc("authority", "reliable")
+func GetSignal(id_signal:int, player_id:int):
+	Gameplay.ProcessSignal("player#"+str(player_id), id_signal)
+
+@rpc("authority", "reliable")
+func ForceSyncGetter(pos:Vector2):
+	Gameplay.ForceSync("player#"+str(multiplayer.get_unique_id()), pos)
 
 func StartGame(map_data:Dictionary, player_in_lobby:Dictionary):
 	if(!is_online):

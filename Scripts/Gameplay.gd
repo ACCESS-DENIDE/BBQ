@@ -116,16 +116,17 @@ func DrawMapTiles(tile_data:Dictionary):
 						
 						r_base_pos=cord*32
 				elif(Vector2i(tile.x, tile.y)==Vector2i(1,0)):
-					var test_here=map_store["SpawnerData"][str(cord.x)+":"+str(cord.y)]["Mode"]
-					match int(test_here):
-						0:
-							player_spawners.push_back(cord*32)
-						1:
-							prop_spawners.push_back(cord*32)
-						2:
-							item_spawners.push_back(cord*32)
-						3:
-							gameplay_spawners.push_back(cord*32)
+					if(Networking.is_authority):
+						var test_here=map_store["SpawnerData"][str(cord.x)+":"+str(cord.y)]["Mode"]
+						match int(test_here):
+							0:
+								player_spawners.push_back(cord*32)
+							1:
+								prop_spawners.push_back(cord*32)
+							2:
+								item_spawners.push_back(cord*32)
+							3:
+								gameplay_spawners.push_back(cord*32)
 					
 		
 		if(map_size.x<cord.x):
@@ -192,6 +193,12 @@ func SetAnim(id:String, id_anim:int):
 	player_ref[id].SetAnim(id_anim)
 	pass
 
+func ProcessSignal(id:String, id_signal:int):
+	if(!((Networking.is_data_loaded) && (is_started))):
+		return
+	player_ref[id].ProcessSignal(id_signal)
+	pass
+
 func SwitchTeam(id:String, id_team:int):
 	if(!(Networking.is_data_loaded)):
 		return
@@ -220,6 +227,11 @@ func EnableUI(ref:Node):
 
 func GetPlayer()->Node:
 	return my_player
+
+func ForceSync(id:String, new_pos:Vector2):
+	if(!((Networking.is_data_loaded) && (is_started))):
+		return
+	player_ref[id].ForceSync(new_pos)
 
 
 func DebugLine(start:Vector2, end:Vector2):

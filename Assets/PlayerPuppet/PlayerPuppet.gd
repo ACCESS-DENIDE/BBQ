@@ -153,6 +153,8 @@ func InitGame(id_abil:int, team:int, un_id:int):
 		Networking.SyncSpeed(net_id, base_speed, speed)
 		
 		shield_recharge_cd=GameGlobalVar.shield_recharge_cd
+		
+		Respawn()
 	is_initiated=true
 
 
@@ -215,13 +217,16 @@ func _physics_process(_delta):
 
 func _process(delta):
 	
-	if(Networking.is_authority):
-		hp-=poison_dmg*delta
-		if(!is_shocked):
-			if(Time.get_ticks_msec()-last_hit>shield_recharge_cd):
-				shield+=(GameGlobalVar.shield_per_sec_regen*(1+items[5]))*delta
-				if(shield>base_shield):
-					shield=base_shield
+	if(Networking.is_authority && Gameplay.is_started):
+		if(!is_dead):
+			hp-=poison_dmg*delta
+			if(!is_shocked):
+				if(Time.get_ticks_msec()-last_hit>shield_recharge_cd):
+					shield+=(GameGlobalVar.shield_per_sec_regen*(1+items[5]))*delta
+					if(shield>base_shield+GameGlobalVar.additional_shield_amount*items[4]):
+						shield=base_shield+GameGlobalVar.additional_shield_amount*items[4]
+			if(hp<=0):
+				Death()
 		UpdateUI(0)
 		UpdateUI(1)
 	
@@ -282,11 +287,11 @@ func UpdateUI(update_id:int):
 	match update_id:
 		0:
 			dict["State"]=hp
-			dict["Base"]=base_hp
+			dict["Base"]=base_hp+GameGlobalVar.additional_hp_amount*items[3]
 			Networking.SyncUiState(net_id, 0, dict)
 		1:
 			dict["State"]=shield
-			dict["Base"]=base_shield
+			dict["Base"]=base_shield+GameGlobalVar.additional_shield_amount*items[4]
 			Networking.SyncUiState(net_id, 1, dict)
 		2:
 			dict["State"]=gold
@@ -310,10 +315,10 @@ func UpdateUI(update_id:int):
 			dict.clear()
 		-1:
 			dict["State"]=hp
-			dict["Base"]=base_hp
+			dict["Base"]=base_hp+GameGlobalVar.additional_hp_amount*items[3]
 			Networking.SyncUiState(net_id, 0, dict)
 			dict["State"]=shield
-			dict["Base"]=base_shield
+			dict["Base"]=base_shield+GameGlobalVar.additional_shield_amount*items[4]
 			Networking.SyncUiState(net_id, 1, dict)
 			dict["State"]=gold
 			dict["Base"]=0
@@ -356,8 +361,6 @@ func Damage(damage:int, modifiers:Array, is_pierce:bool):
 				shield=0
 	else:
 		hp=hp-damage
-		if(hp<=0):
-			Death()
 	
 	if(modifiers[0]>0):
 		poison_dmg=damage/10
@@ -373,9 +376,6 @@ func Damage(damage:int, modifiers:Array, is_pierce:bool):
 	
 	last_hit=Time.get_ticks_msec()
 	
-	UpdateUI(0)
-	UpdateUI(1)
-	
 	pass
 
 func PoisonOut():
@@ -387,6 +387,50 @@ func StunOut():
 func ShockOut():
 	is_shocked=false
 
+func Teleport(pos:Vector2):
+	if(!Networking.is_authority):
+		return
+	
+	position=pos
+	
+	Networking.ForceSync(net_id, position)
+
+
+func Respawn():
+	Networking.SendSignal(1,net_id)
+	is_dead=false
+	hp=base_hp+GameGlobalVar.additional_hp_amount*items[3]
+	shield=base_shield+GameGlobalVar.additional_shield_amount*items[4]
+	ReloadTimerOut()
+	collision_layer=1
+	collision_mask=1
+	visible=true
+	Teleport(GamemodeProcessor.GetRespawnLock(self))
+	UpdateUI(-1)
 
 func Death():
+	Networking.SendSignal(-1, net_id)
+	is_dead=true
+	collision_layer=0
+	collision_mask=0
+	visible=false
+	is_shooting=false
+	is_hold=false
+	$RespawnTimer.start(GameGlobalVar.respawn_time)
 	pass
+
+
+func ProcessSignal(id:int):
+	match id:
+		1:
+			is_dead=false
+			visible=true
+			collision_layer=1
+			collision_mask=1
+			pass
+		-1:
+			is_dead=true
+			visible=false
+			collision_layer=0
+			collision_mask=0
+			pass

@@ -1,18 +1,50 @@
-[gd_scene load_steps=5 format=3 uid="uid://b07rudo74ighw"]
+[gd_scene load_steps=6 format=3 uid="uid://b07rudo74ighw"]
 
-[ext_resource type="Script" path="res://Scenes/test_scene.gd" id="1_gomwe"]
-[ext_resource type="PackedScene" uid="uid://dk6nk25xuwvdd" path="res://Assets/Player/Player.tscn" id="2_s733w"]
-[ext_resource type="PackedScene" uid="uid://l55nmkxhboi5" path="res://Assets/PlayerPuppet/PlayerPuppet.tscn" id="3_yf0m1"]
-[ext_resource type="PackedScene" uid="uid://bnbbrej7u4fjs" path="res://Assets/LevelBlocks/PLACEHOLDER/PLACEHOLDER.tscn" id="4_tlswm"]
+[ext_resource type="Texture2D" uid="uid://ojashfw1oia6" path="res://Resourses/Textures/Explosion.png" id="1_1q4c4"]
 
-[node name="test_scene" type="Node2D"]
-script = ExtResource("1_gomwe")
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_o6afm"]
+particles_animation = true
+particles_anim_h_frames = 9
+particles_anim_v_frames = 1
+particles_anim_loop = false
 
-[node name="Player" parent="." instance=ExtResource("2_s733w")]
-position = Vector2(-265, -101)
+[sub_resource type="Curve" id="Curve_6rejr"]
+max_value = 3.0
+_data = [Vector2(0, 0.372227), 0.0, 0.0, 0, 0, Vector2(0.986871, 1.49384), 0.0, 0.0, 0, 0]
+point_count = 2
 
-[node name="PlayerPuppet" parent="." instance=ExtResource("3_yf0m1")]
-position = Vector2(-197, -169)
+[sub_resource type="CurveTexture" id="CurveTexture_loou8"]
+curve = SubResource("Curve_6rejr")
 
-[node name="Crate" parent="." instance=ExtResource("4_tlswm")]
-position = Vector2(-187, -111)
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_nftts"]
+particle_flag_rotate_y = true
+particle_flag_disable_z = true
+angle_min = -180.0
+angle_max = 180.0
+direction = Vector3(0, 0, 0)
+spread = 180.0
+initial_velocity_min = 100.0
+initial_velocity_max = 200.0
+angular_velocity_min = 2.0
+angular_velocity_max = 2.0
+radial_velocity_min = 100.0
+radial_velocity_max = 100.0
+gravity = Vector3(0, 0, 0)
+radial_accel_min = 0.1
+radial_accel_max = 1.0
+damping_min = 500.0
+damping_max = 1000.0
+scale_max = 2.0
+scale_over_velocity_max = 1.0
+scale_over_velocity_curve = SubResource("CurveTexture_loou8")
+anim_speed_min = 1.0
+anim_speed_max = 2.0
+turbulence_enabled = true
+
+[node name="GPUParticles2D" type="GPUParticles2D"]
+material = SubResource("CanvasItemMaterial_o6afm")
+amount = 20
+process_material = SubResource("ParticleProcessMaterial_nftts")
+texture = ExtResource("1_1q4c4")
+explosiveness = 1.0
+visibility_rect = Rect2(-200, -200, 200, 200)
